@@ -78,6 +78,7 @@ class _Asker:
         self.server_only = getattr(args, "server_only", False)
         self.allow_unmeasured = getattr(args, "allow_unmeasured", False)
         self.yesno = getattr(args, "yesno", False)
+        self.warn_clipped = getattr(args, "warn_clipped", True)
         self.main_path = ((args.model or self.settings.model_path) if self.server_only
                           else _resolved_model(args.model, self.settings))
         self._warned: set[str] = set()
@@ -99,7 +100,8 @@ class _Asker:
             raise QuestionError(_refusal(problems))
         for line in problems:
             self.warn(line)
-        clipped = inputs.maybe_clipped(state, self.settings.prompt_token_budget)
+        clipped = (inputs.maybe_clipped(state, self.settings.prompt_token_budget)
+                   if self.warn_clipped else None)
         if clipped:
             self.warn(clipped)
         rewritten: set[str] = set()

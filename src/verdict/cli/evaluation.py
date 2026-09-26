@@ -21,6 +21,8 @@ def _bench_cmd(args: argparse.Namespace) -> int:
     # A suite is scored exactly as pinned: `sst2-yesno` exists to track the plain yes/no that the
     # everyday rewrite works around, so rewriting it here would hide the thing it measures.
     args.yesno = args.allow_unmeasured = True
+    # Suites are clipped on purpose, as users' states are; the warning is for a user's own input.
+    args.warn_clipped = False
     if args.verify:
         path = Path(args.verify)
         current = json.loads(path.read_text())

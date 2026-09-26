@@ -305,3 +305,12 @@ def test_bench_asks_a_multi_suite_with_the_multilingual_checkpoint(toy_bench, mo
     monkeypatch.setattr(client, "decide", fake)
     assert cli.main(["bench", "--pause", "0"]) == 0
     assert set(models) == {"multilingual"}
+
+
+def test_bench_does_not_warn_about_long_items(toy_bench, monkeypatch, capsys):
+    """The bench clips its items on purpose, as users' states are; the long-state warning is for
+    a user's own input, and on a bench run it was only noise."""
+    long_rows = [{**r, "sentence": r["sentence"] + " filler" * 200} for r in ROWS]
+    monkeypatch.setattr(bench, "fetch", lambda s: long_rows)
+    assert cli.main(["bench", "--out", str(toy_bench / "v0.5.0.json"), "--pause", "0"]) == 0
+    assert "first 128 tokens" not in capsys.readouterr().err
