@@ -78,8 +78,7 @@ Do not re-derive these. Each is measured, in `docs/FINDINGS.md`.
 - The agent skill ships from this repo as a plugin: `.claude-plugin/marketplace.json` and
   `plugins/verdict/skills/verdict/`. `tests/test_plugin.py` ties the plugin version to
   the package version and refuses private paths in what ships.
-- Releases: follow the `verdict-release` project skill (`.claude/skills/verdict-release/`). In
-  short, a `vX.Y.Z` tag with a committed scorecard (`bench/scorecards/vX.Y.Z.json`, run at
+- Releases: a `vX.Y.Z` tag with a committed scorecard (`bench/scorecards/vX.Y.Z.json`, run at
   normal priority); `.github/workflows/release.yml` runs the suite on macOS arm64 on tags only
   (10x-billed minutes), checks the tag against the version and refuses a missing or regressed
   scorecard. The default model is base Laya (`aac6fef/laya-mlx`); the fine-tune is private, in

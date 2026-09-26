@@ -28,4 +28,5 @@ CLAUDE.local.md
 
 # Skill changelogs are private notes kept outside this repo; locally they are symlinked here.
 plugins/verdict/skills/verdict/EVOLUTION.md
-.claude/skills/verdict-release/EVOLUTION.md
+# The maintainer's release skill is private too; locally it is a symlink here.
+.claude/skills/verdict-release
