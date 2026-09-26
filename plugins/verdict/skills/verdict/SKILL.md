@@ -145,23 +145,22 @@ TypeSafe's cookbooks work locally with `TYPESAFE_BASE_URL=http://127.0.0.1:8799`
 
 ## Worked example
 
-A user asks which of their 300 open GitHub issues are bug reports that need a reply.
+A user asks which of the 1,500 shell commands their agent ran last month touched a secret.
 
-1. Too many to read well, but each answer is on the page. That's a job for verdict. "Is this a
-   bug report" is about what the text says. Sorting the issues into five categories would be a
-   small LLM's job instead (FINDINGS §32).
-2. Check `verdict questions` and `references/questions.md`: nothing for issues yet, so write the
-   plain question as a named choice. State `{"title": ..., "body": ...}`, question "Does `body`
-   describe something broken?", options `broken=describes something not working` and
-   `other=a request, question or idea`.
-3. `verdict validate -q bank.json`, check what is loaded, then `verdict serve &`. Score a sample
-   of 200 first: `verdict decide --jsonl -q bank.json --server-only < issues.jsonl > scored.jsonl`.
-4. Sort by P(broken) and read the top 30 yourself. You find 24 real bug reports and 6 feature
-   requests written as complaints.
-5. Report the ranking and what you read, not "0.5 means bug". Stop the server.
+1. Too many to read well, and each answer is on the page: a yes/no about what the command does.
+   That's a job for verdict. Sorting the commands by which service they touch would be a small
+   LLM's job instead (FINDINGS §32).
+2. `verdict questions` lists `touches_secret` (AUC 0.77 on real blocked commands, Haiku 4.5
+   0.73). Use it by name, with states shaped as it says: `{"command": "..."}`.
+3. Check what is loaded, then `verdict serve &`. Score a sample of 200 first:
+   `verdict decide --jsonl -q touches_secret --server-only < commands.jsonl > scored.jsonl`.
+4. Sort by the answer and read the top 30 yourself. Then read a slice further down as well: a
+   command that pulls secrets without naming one (`vercel env pull`) ranks low, because verdict
+   reads the surface (`examples/secret-commands/`).
+5. Report the ranking and what you read, not "0.5 means secret". For a repeatable gate, label a
+   few dozen and fit a cut with `verdict calibrate`. Stop the server.
 
-The outputs in step 4 are illustrative. The steps are the real procedure; the repo's `examples/`
-folder has real runs with real output.
+The repo's `examples/secret-commands/` is this procedure with real output.
 
 ## Reading the numbers
 
