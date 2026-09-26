@@ -3,8 +3,7 @@
 A typed decision API and the pipeline that trains its model. See `README.md` for what is built
 and `docs/FINDINGS.md` for what has actually been measured.
 
-Public on GitHub as `iksnerd/verdict` (renamed from `SystemOne` on 2026-09-26; the old URL
-redirects), Apache-2.0. The fine-tuned weights are not: they stay in the private Hugging Face
+Public on GitHub as `iksnerd/verdict`, Apache-2.0. The fine-tuned weights are not: they stay in the private Hugging Face
 repo `iksnerd/verdict-v1-mlx` (trained on Gemini labels). Never attach them to a GitHub release.
 History is pushed, so do not rewrite it without asking.
 
@@ -21,8 +20,7 @@ History is pushed, so do not rewrite it without asking.
 - Every backend implements `Backend` (`name`, `decide`). Anything new plugs in there.
 - verdict is a System 1 (Kahneman): fast typed judgments for a System 2, a person or an agent,
   to act on. It answers and never acts on an answer: no dispatch, no model-to-model routing,
-  nothing run because of a verdict (`route --exec` and the `[routes]` table were removed on
-  2026-09-22). Anyone who wants an answer to launch something writes that in their own script.
+  nothing run because of a verdict. Anyone who wants an answer to launch something writes that in their own script.
   The only commands that run anything are maintenance: `verdict update` (in a checkout, `git pull
   --ff-only` plus `uv sync --extra mlx --extra laya`; in a `uv tool` install, a reinstall of the
   newest `v*` tag).
@@ -53,7 +51,7 @@ Do not re-derive these. Each is measured, in `docs/FINDINGS.md`.
   `mizorewww/laya-coreml#5`.
 - **Connection reuse** (§20). Measured at 3% *slower*: a loopback handshake is free against 33 ms
   of inference.
-- **Describing the `noul` sides** (§22). Reachable now that the schema allows it, and it drops
+- **Describing the `noul` sides** (§22). It drops
   `is_sensitive` AUC from 0.813 to 0.633.
 
 ## Constraints

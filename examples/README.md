@@ -14,9 +14,8 @@ Check a bank without loading a model using `verdict validate -q examples/<name>/
 add `--json` for an agent-readable validation result. Add `--server-only` to `decide` to fail
 with exit status 2 if the server is unavailable, instead of loading a local fallback model.
 
-The output below is real, from verdict 0.4.0 on 2026-09-24; room-triage and support-tickets were
-rerun, and ticket-search added, on 2026-09-25, when a new yes/no started being asked as a no/yes choice (FINDINGS §38). It
-includes the misses, because knowing what it gets wrong is the point.
+The output below is real, from the fine-tuned checkpoint, and includes the misses, because
+knowing what it gets wrong is the point.
 
 | example | question types | what it shows |
 |---|---|---|

@@ -77,7 +77,7 @@ def _update_tool(args: argparse.Namespace) -> int:
     code, out = _run(install)
     if code != 0 and "Could not parse object" in out:
         # uv resolved the new tag but its cached clone predates the commit, seen right after a tag
-        # was pushed (v0.8.0). Refreshing makes it fetch; once, so a real failure is not looped.
+        # was pushed. Refreshing makes it fetch; once, so a real failure is not looped.
         code, out = _run(install[:3] + ["--refresh-package", "verdict"] + install[3:])
     if code != 0:
         return support._fail(f"`uv tool install {spec}` failed:\n{out}")

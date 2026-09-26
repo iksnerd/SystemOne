@@ -16,8 +16,8 @@ from .. import client
 from ..engine import load
 from ..errors import QuestionError
 
-#: Checkpoints loaded in this process, by path. Without a server every call used to load the model
-#: again, so `decide --jsonl` over 300 states paid 300 loads and held the GPU the whole time.
+#: Checkpoints loaded in this process, by path, so a run without a server loads each model once,
+#: not once per state (300 loads for a 300-state `decide --jsonl`).
 _ENGINES: dict[str, object] = {}
 
 

@@ -40,3 +40,11 @@
   redistributable labels.
 - **Score:** validator clean; not rescored.
 - **Outcome:** Accepted.
+
+### 2026-09-26: present tense, no dead version numbers
+- **Trigger:** the history restart left the skill citing versions that no longer exist
+  (0.5.0 to 0.12.0) and a conftest isolation that went with the weights download.
+- **Change:** each lesson kept, told without version numbers; the CI-failure note says what
+  conftest isolates now (the machine's config).
+- **Score:** validator clean; not rescored.
+- **Outcome:** Accepted.

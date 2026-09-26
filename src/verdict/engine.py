@@ -2,12 +2,9 @@
 
 `Backend` (see `backend.py`) is the seam the HTTP API talks through: one `DecideRequest` in, one
 `DecideResponse` out. That is the right shape for serving and the wrong shape for scoring 360
-states in a loop, so every scorer in `scripts/` used to reach past it and pull `MlxBackend._load()`
-out by its private attribute, while the CLI and the benchmarks skipped the class entirely and
-called `laya_mlx.load` themselves. Five load sites, four tokenizer sites, one private attribute
-read from three files.
+states in a loop.
 
-So there are two seams, on purpose, and this is the batch one. `MlxBackend` is now a thin
+So there are two seams, on purpose, and this is the batch one. `MlxBackend` is a thin
 translation layer over an `Engine`, and anything doing bulk work uses the `Engine` directly and
 keeps raw dicts instead of paying for pydantic on every question.
 

@@ -11,7 +11,7 @@ from .errors import QuestionError
 
 
 #: What to ask: text, or JSON that laya renders compactly. Optional, as in Jev's API; a missing one
-#: reaches laya as "". This was `str` only, which rejected what laya and Jev both accept.
+#: reaches laya as "". Laya and Jev both accept structured instructions, so this does too.
 Instructions = Union[str, dict[str, Any], list[Any], None]
 
 
@@ -19,8 +19,8 @@ class ChoiceQuestion(BaseModel):
     type: Literal["choice"]
     instructions: Instructions = None
     #: A criterion may be structured. laya renders a dict or list as compact JSON, so a rubric
-    #: arrives as JSON rather than a Python repr. This used to be `str | None` only, which
-    #: rejected input laya accepts and made this schema stricter than the format it mirrors.
+    #: arrives as JSON rather than a Python repr. The schema must accept whatever the format it
+    #: mirrors accepts.
     criteria: Union[dict[str, Any], list[Any]]
 
     @model_validator(mode="after")
@@ -57,8 +57,6 @@ class NoulQuestion(BaseModel):
     option descriptions and the state. It measurably moves answers: describing both sides took a
     pure lookup that mentions money ("what's the current VAT rate in Germany") from 0.574 to 0.384
     on `is_sensitive`, which is the difference between escalating it and not (FINDINGS §22).
-
-    This was `extra: forbid` with no `criteria` field, so the schema rejected what laya accepts.
     """
 
     type: Literal["noul"]

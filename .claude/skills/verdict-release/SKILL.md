@@ -16,8 +16,7 @@ checks the tag against `pyproject.toml`, refuses a tag without a committed score
 version or one below the previous scorecard's interval, and publishes the wheel. The global
 `verdict` is a `uv tool` install of the newest tag, so nothing reaches it any other way.
 
-Seven releases on 2026-09-24 (0.5.0 to 0.8.2) produced every step and check below; each check
-names what went wrong without it.
+Every step and check below comes from a release that went wrong without it.
 
 ## Before you start
 
@@ -83,9 +82,9 @@ names what went wrong without it.
    `gh run watch <id> --exit-status`. Every step must pass, "Answer-quality scorecard"
    included.
    - **If CI fails, never move the pushed tag.** Fix on main and release the next patch; the
-     failed tag stays with no release, and `verdict update` skips it. The first failure
-     (v0.7.0) was two tests passing only because the release machine had the weights installed;
-     `tests/conftest.py` now isolates every test from them.
+     failed tag stays with no release, and `verdict update` skips it. A test that passes only
+     because of something on the release machine (weights, a config file) fails here first;
+     `tests/conftest.py` keeps the machine's config away from every test.
 
 8. **Install as a user would:**
    ```sh
@@ -95,8 +94,8 @@ names what went wrong without it.
    object"); a second failure is real.
 
    Then move the installed agent skill too. The tool and the plugin update separately, and
-   nothing else moves the plugin: three releases (0.11.0 to 0.12.0) shipped while the release machine's
-   sessions kept the 0.10.0 skill, still telling agents to run the refused `guard` preset.
+   nothing else moves the plugin: without this step, releases ship while sessions keep an old skill
+   that tells agents to do things the tool now refuses.
    ```sh
    claude plugin marketplace update verdict && claude plugin update verdict@verdict
    claude plugin list | grep -A1 'verdict@verdict'     # Version: NEW
@@ -104,9 +103,8 @@ names what went wrong without it.
 
 9. **Exercise the change on the installed tool, including bad input.** Run the new command or
    flag, then feed it something wrong and check for a one-line `verdict:` error with exit 2,
-   never a traceback. This step found six crashes after 0.8.0 (`bits = 4`, a portless URL, a
-   TOML typo, ...), fixed in 0.8.1. Tests had not caught them because they exercised the
-   happy path.
+   never a traceback. This step has found crashes the tests missed (`bits = 4`, a portless URL,
+   a TOML typo), because the tests exercised the happy path.
 
 ## Done when
 
