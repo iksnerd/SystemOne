@@ -35,9 +35,11 @@ On public labelled sets the default model ranks sentiment at 0.94, spam at 0.99 
 injection at 0.88 AUC ([FINDINGS §40](docs/FINDINGS.md)).
 
 It is the wrong tool for categories that need world knowledge (seven commit types: 0.44 accuracy,
-[FINDINGS §41](docs/FINDINGS.md); an LLM does better), for more than 20 options, for long documents (it reads the first 128 tokens), and
-for questions about consequences or difficulty, which score at chance. verdict refuses the last
-two kinds of question rather than answer them badly.
+where an LLM does better) or a maintainer's judgment (bug report or support question: 0.59, and two
+rounds of fine-tuning did not fix it; [FINDINGS §41, §45](docs/FINDINGS.md)). It is also wrong for
+more than 20 options, for long documents (it reads the first 128 tokens), and for questions about
+consequences or difficulty, which score at chance. verdict refuses those questions and more than
+20 options rather than answer them badly, and warns when a text runs past what it reads.
 
 ## Features
 

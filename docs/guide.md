@@ -141,7 +141,7 @@ Run a secret scan before using transcripts: one in 2,348 prompts held a live cre
 | one item, or a few dozen | read them yourself | you're more accurate, and it fits in one read |
 | a yes/no about what the text shows, over hundreds of items | **verdict** | matched Claude Haiku 4.5 (0.77 vs 0.73 AUC), free and local (§32) |
 | anything that must stay on your machine | **verdict** | nothing leaves it |
-| sorting into several categories, or anything needing world knowledge | a small LLM, if the data may leave the machine | Haiku 0.67 vs verdict 0.44 to 0.48 on 7 commit types (§32, §41) |
+| sorting into several categories, or anything needing world knowledge or a maintainer's judgment | a small LLM, if the data may leave the machine | Haiku 0.67 vs verdict 0.44 to 0.48 on 7 commit types (§32, §41); GitHub bug vs support question 0.59, most questions read as bugs, not fixed by two rounds of fine-tuning (§41, §45) |
 | more than 20 options | a shortlist first, yes/no per option, or an LLM | options share one token budget; 77 options scored 0.43 (§41). verdict refuses past 20 |
 | long documents | an LLM, or split the text | only the first 128 tokens are read; verdict warns when a state is far past that |
 | consequences, difficulty, counting, dates, pulling out values | an LLM | nothing on the page answers them; the first two score at chance (§25, §29) |
