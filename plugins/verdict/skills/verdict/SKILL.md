@@ -20,7 +20,7 @@ attention where it flags something. Like any System 1 it is confident whether or
 right, so don't gate on a raw score.
 
 It is a CLI on Apple Silicon (`uv tool install --python 3.11 'verdict[mlx,laya] @
-git+https://github.com/iksnerd/SystemOne.git@vX.Y.Z'`). `verdict --help` and `verdict COMMAND
+git+https://github.com/iksnerd/verdict.git@vX.Y.Z'`). `verdict --help` and `verdict COMMAND
 --help` have the full reference; the repo's `docs/guide.md` is the human guide and `examples/`
 has real runs.
 - verdict runs **base Laya** by default. A plain yes/no is at chance on it (SST-2 0.50), but

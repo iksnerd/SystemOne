@@ -1,7 +1,5 @@
 # verdict
 
-*(The GitHub repository is `SystemOne`; the package, the module and the command are `verdict`.)*
-
 A System 1 for agents, in Kahneman's sense: fast, automatic judgments with a number attached. Ask
 a typed question about a piece of text (yes/no, pick one, or a level) and get a probability per
 option in tens of milliseconds, from a local encoder. No generated text, nothing to parse, and
@@ -23,7 +21,7 @@ for data that must stay local. Use a small LLM for categories that need world kn
 Apple Silicon, Python 3.11.
 
 ```sh
-uv tool install --python 3.11 'verdict[mlx,laya] @ git+https://github.com/iksnerd/SystemOne.git@v0.1.0'
+uv tool install --python 3.11 'verdict[mlx,laya] @ git+https://github.com/iksnerd/verdict.git@v0.1.0'
 verdict init        # fetches the weights if you have access, picks a free port, writes the config
 verdict serve &     # holds the model, so each call costs milliseconds
 
@@ -169,7 +167,7 @@ What is where:
 when to reach for verdict, which questions have been measured, and how to read the numbers:
 
 ```sh
-claude plugin marketplace add iksnerd/SystemOne
+claude plugin marketplace add iksnerd/verdict
 claude plugin install verdict@verdict
 ```
 

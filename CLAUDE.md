@@ -3,8 +3,8 @@
 A typed decision API and the pipeline that trains its model. See `README.md` for what is built
 and `docs/FINDINGS.md` for what has actually been measured.
 
-Public on GitHub as `iksnerd/SystemOne` since 2026-09-24, Apache-2.0 (the folder and the Python
-package stay `verdict`). The fine-tuned weights are not: they stay in the private Hugging Face
+Public on GitHub as `iksnerd/verdict` (renamed from `SystemOne` on 2026-09-26; the old URL
+redirects), Apache-2.0. The fine-tuned weights are not: they stay in the private Hugging Face
 repo `iksnerd/verdict-v1-mlx` (trained on Gemini labels). Never attach them to a GitHub release.
 History is pushed, so do not rewrite it without asking.
 
@@ -117,7 +117,7 @@ Do not re-derive these. Each is measured, in `docs/FINDINGS.md`.
   `verdict calibrate`, `verdict bench [--verify CARD]`, `verdict rank`, `verdict docs`. The plugin's `verdict` skill says
   when an agent should reach for it.
 - The everyday `verdict` on PATH is a `uv tool` install of a release tag, not this checkout:
-  `uv tool install --python 3.11 'verdict[mlx,laya] @ git+https://github.com/iksnerd/SystemOne.git@vX.Y.Z'`.
+  `uv tool install --python 3.11 'verdict[mlx,laya] @ git+https://github.com/iksnerd/verdict.git@vX.Y.Z'`.
   `verdict update` moves it to the newest tag. Its weights live in `~/.local/share/verdict/models/`,
   and `models/verdict-v1-mlx` here is a symlink to them, so the pipeline and `uv run verdict` in
   this repo still find them. `~/.config/verdict/config.toml` points at the absolute path. Changes

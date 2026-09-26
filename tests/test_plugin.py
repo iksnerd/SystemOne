@@ -1,5 +1,5 @@
 """The agent skill ships from this repo as a Claude Code plugin (`claude plugin marketplace add
-iksnerd/SystemOne`). It is the canonical copy: an older one in `skill/` drifted into contradicting
+iksnerd/verdict`). It is the canonical copy: an older one in `skill/` drifted into contradicting
 the maintained skill and was retired, so the checks here are what keep this one honest."""
 from __future__ import annotations
 

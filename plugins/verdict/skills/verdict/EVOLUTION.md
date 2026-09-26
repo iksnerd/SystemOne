@@ -63,7 +63,7 @@ Append-only, oldest first. Read before changing the skill.
 - **Outcome:** Accepted
 
 ### 2026-09-24: weights from Hugging Face, install over HTTPS (verdict 0.9.0)
-- **Trigger:** before iksnerd/SystemOne went public, the weights moved from a GitHub release (`gh`)
+- **Trigger:** before iksnerd/verdict went public, the weights moved from a GitHub release (`gh`)
   to the private Hugging Face repo `iksnerd/verdict-v1-mlx`, and install moved from `git+ssh` to
   `git+https`. The reinstall line still said `gh` and ssh.
 - **Change:** the reinstall line names the HF repo, `HF_TOKEN` and where the token lives; the
@@ -78,7 +78,7 @@ Append-only, oldest first. Read before changing the skill.
 - **Outcome:** Accepted
 
 ### 2026-09-24: moved into the verdict repo as the canonical, public skill
-- **Trigger:** iksnerd/SystemOne went public, and the agent guide belongs with the tool. Two full
+- **Trigger:** iksnerd/verdict went public, and the agent guide belongs with the tool. Two full
   copies had drifted once before (the repo's old `skill/verdict/`), so the repo copy became
   canonical and a private copy kept only one machine's specifics.
 - **Change:** the plugin `verdict` (`.claude-plugin/marketplace.json`, `plugins/verdict/`) carries
@@ -127,7 +127,7 @@ Append-only, oldest first. Read before changing the skill.
 - **Outcome:** Accepted.
 
 ### 2026-09-26: general facts moved in from a private skill
-- **Trigger:** everything someone cloning iksnerd/SystemOne needs belongs in this plugin, not in a
+- **Trigger:** everything someone cloning iksnerd/verdict needs belongs in this plugin, not in a
   private companion skill. Three general facts lived only there: `verdict docs`,
   `update --check`'s exit code, and the multilingual checkpoint's English cost and library rewrite.
 - **Change:** two command lines; the non-English bullet says when not to use `multi` and what it

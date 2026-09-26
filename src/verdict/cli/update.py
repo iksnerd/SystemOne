@@ -11,7 +11,7 @@ from . import setup, support
 
 #: Where releases come from. A `uv tool install` has no checkout, so it updates to the newest
 #: `vX.Y.Z` tag here, which the release workflow has tested and built.
-REPO_URL = os.environ.get("VERDICT_REPO", "https://github.com/iksnerd/SystemOne.git")
+REPO_URL = os.environ.get("VERDICT_REPO", "https://github.com/iksnerd/verdict.git")
 TOOL_EXTRAS = "mlx,laya"
 
 

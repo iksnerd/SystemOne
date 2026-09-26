@@ -423,7 +423,7 @@ Exit status: 0; with --verify, 1 when any suite regressed (the release workflow 
   verdict update           # newest release (or pull + sync in a checkout), and what changed
   verdict update --check   # report only: exit 0 up to date, 1 behind
 
-Releases come from $VERDICT_REPO (default https://github.com/iksnerd/SystemOne.git) and are the
+Releases come from $VERDICT_REPO (default https://github.com/iksnerd/verdict.git) and are the
 tags the release workflow tested. In a checkout it refuses on uncommitted changes and only
 fast-forwards. A running `verdict serve` keeps the old code until restarted.
 

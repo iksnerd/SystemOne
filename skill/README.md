@@ -4,7 +4,7 @@ The agent skill for verdict now lives in this repo as a Claude Code plugin, in
 [`plugins/verdict/`](../plugins/verdict/skills/verdict/SKILL.md). Install it with:
 
 ```sh
-claude plugin marketplace add iksnerd/SystemOne
+claude plugin marketplace add iksnerd/verdict
 claude plugin install verdict@verdict
 ```
 

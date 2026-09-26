@@ -26,7 +26,7 @@ def read(topic: str) -> str:
         if path.is_file():
             return path.read_text()
     raise FileNotFoundError(f"{source} is not in this install; see "
-                            "https://github.com/iksnerd/SystemOne")
+                            "https://github.com/iksnerd/verdict")
 
 
 def section(text: str, number: int) -> str:

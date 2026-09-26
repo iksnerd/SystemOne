@@ -1,7 +1,7 @@
 ---
 name: verdict-release
 description: >-
-  Cut a verdict release (a vX.Y.Z tag on iksnerd/SystemOne): bump, answer-quality scorecard,
+  Cut a verdict release (a vX.Y.Z tag on iksnerd/verdict): bump, answer-quality scorecard,
   commit, tag, CI, then install it the way a user would and try bad inputs. Use when asked to
   release, tag, cut or ship a verdict version, or to get a change onto the global `verdict`.
   Not for uploading a new model checkpoint (a Hugging Face commit, see the end).
@@ -32,7 +32,7 @@ names what went wrong without it.
    a plugin version left behind makes `claude plugin update` serve the old skill):
    ```sh
    sed -i '' 's/^version = "OLD"/version = "NEW"/' pyproject.toml
-   sed -i '' 's/SystemOne.git@vOLD/SystemOne.git@vNEW/' README.md docs/guide.md
+   sed -i '' 's/verdict.git@vOLD/verdict.git@vNEW/' README.md docs/guide.md
    sed -i '' 's/"version": "OLD"/"version": "NEW"/' plugins/verdict/.claude-plugin/plugin.json
    uv lock -q && uv sync -q --extra mlx --extra laya --extra bench
    uv run verdict --version            # must print NEW
@@ -79,7 +79,7 @@ names what went wrong without it.
      && git push -q origin main && git tag vNEW && git push -q origin vNEW
    ```
 
-7. **Watch CI** (about a minute): `gh run list -R iksnerd/SystemOne --limit 3`, then
+7. **Watch CI** (about a minute): `gh run list -R iksnerd/verdict --limit 3`, then
    `gh run watch <id> --exit-status`. Every step must pass, "Answer-quality scorecard"
    included.
    - **If CI fails, never move the pushed tag.** Fix on main and release the next patch; the
