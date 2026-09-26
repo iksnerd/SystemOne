@@ -1551,3 +1551,41 @@ Jev, whose quality comes from its training. It does say that an off-the-shelf sm
 shortcut: reaching Jev would take the same training data, on a model ten times slower here. Laya
 stays the base.
 
+
+## 44. A targeted synthetic pilot for issue type: a recorded negative (2026-09-26)
+
+§42 left GitHub questions read as bugs as the one hole worth data. The pilot, with its rule fixed
+before any training: fine-tune base Laya (pinned revision `1c5edc17`) on synthetic issues, and
+ship nothing unless it (1) beats base Laya on the §41 real issues with non-overlapping 95%
+intervals, (2) lifts question recall above base Laya's best wording, 0.27, and (3) holds the bench.
+
+The data is the `github_issue_typing` domain. Gemini 2.5 Flash-Lite wrote 862 issues on about 50
+projects, none of them the five in the test set, with no label or prefix in the title. Two
+Gemini teachers labelled them with §41's exact question, and the teachers agreed on 95% of the 801 both labelled. Train
+554, holdout 196. Four epochs on one A10G took about 2 minutes. Spend was about $0.70 in all:
+$0.41 generating, $0.18 labelling and a few cents of GPU.
+
+| real set, same run | base Laya | pilot |
+|---|---|---|
+| issue type, 300 | 0.587 [0.533, 0.647] | 0.623 [0.573, 0.680] |
+| question recall | 0.18 | 0.28 |
+| bug / feature recall | 0.90 / 0.68 | 0.95 / 0.64 |
+| commit type, 420 | 0.443 [0.398, 0.488] | 0.457 [0.410, 0.505] |
+| dialogue act, 400 | 0.417 [0.367, 0.468] | 0.492 [0.440, 0.542] |
+
+**It fails the rule.** The intervals overlap. Question recall clears 0.27 by one item in a
+hundred, the same gain §42 got from rewording for free. The pilot still calls 190 of 300 issues
+bugs. The bench was not run, since condition (1) already fails. The one clear move was
+unintended: dialogue questions, 0.45 to 0.80 recall. Training on "how do I..." issues taught the
+model what a question looks like in conversation, not on a GitHub page.
+
+**Reading it.** About 550 synthetic issues move the choice no more than a better question does.
+A synthetic question reads like a question. A real one often quotes a stack trace and asks why,
+which a generator told to avoid calling it a bug does not reproduce. More data of the same kind is
+not the next step. The candidates are the real shape (a question that carries an error), or
+§43's decoder, which already reaches 0.78 question recall zero-shot. Nothing ships: the checkpoint
+stays local, and the default model is unchanged.
+
+A bug found on the way: the split audit read only `message` and `text`, so every `issue` state
+read as empty and "duplicated" a held-out one, and export wrote no training rows. The audit now
+reads `issue` too (`tests/test_export.py`).

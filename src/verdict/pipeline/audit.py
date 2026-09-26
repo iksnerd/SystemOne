@@ -20,7 +20,7 @@ def author_of(s: dict) -> str:
 
 def text_of(s: dict) -> str:
     st = s["state"]
-    return st.get("message") or st.get("text", "")
+    return st.get("message") or st.get("text") or st.get("issue", "")
 
 
 def split_stats(states: list[dict], split: dict) -> dict:

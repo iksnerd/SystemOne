@@ -96,3 +96,13 @@ def test_export_order_is_shuffled_by_salted_hash_not_by_generation_order(tmp_pat
     states = [r["id"] for r in JsonlStore(tmp_path / "states.jsonl", key=lambda r: r["id"]).rows()]
     in_gen_order = [i for i in states if i in set(a)]
     assert a != in_gen_order and a != b and sorted(a) == sorted(b)
+
+
+def test_held_out_leak_reads_issue_states():
+    # issue states keep their text under "issue"; read as empty, every one "duplicated" another
+    states = [
+        {"id": "a", "state": {"issue": "Crash on startup with 2.1\nTraceback in loader.py when the cache is empty"}},
+        {"id": "b", "state": {"issue": "How do I set a custom cache path?\nThe docs mention an option I cannot find"}},
+        {"id": "c", "state": {"issue": "Add a --dry-run flag to migrate\nIt would help to preview changes first"}},
+    ]
+    assert held_out_leak(states, {"train": ["a", "c"], "holdout": ["b"], "test": []}) == []
