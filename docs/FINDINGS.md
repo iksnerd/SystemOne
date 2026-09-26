@@ -1,12 +1,14 @@
-# Findings (2026-09-19 to 2026-09-24)
+# Findings
 
-Every number verdict's docs cite comes from a section here, and each section says its n. §1 to §9
-are the base `laya` checkpoint zero-shot through the `laya-mlx` port (`aac6fef/laya-mlx`, FP16),
+The lab notebook behind verdict: dated, append-only experiments. It is here because every number
+the docs and the CLI cite comes from a section in it, and each section says its n. For how to use
+verdict, read the [guide](guide.md); for what is true now, read the latest sections, which
+override earlier ones. The research scripts most sections name are not published; the
+public-dataset results can be rerun with `verdict bench`.
+
+§1 to §9 are the base `laya` checkpoint zero-shot through the `laya-mlx` port (`aac6fef/laya-mlx`, FP16),
 plus teacher-label agreement. From §10 on the model is our fine-tune, `verdict-v1`, unless a
-section says otherwise. The early sections' scripts are in `experiments/` (local only: some read
-private data) with raw outputs in `data/` (gitignored). The later ones are committed in
-`scripts/`, and the public-dataset results can be rerun with `verdict bench`. Sections are
-append-only: a later finding that overturns an earlier one says so in its own section (§26
+section says otherwise. Sections are append-only: a later finding that overturns an earlier one says so in its own section (§26
 corrects §25).
 
 ## 1. What the model sees
@@ -422,8 +424,8 @@ the lot: **$0.00**. Every one of `teacher-prompt`'s 86 states was a cache hit, s
 that was never filled in: a placeholder task description, a baseline with no number, contamination
 notes reading "replace with real exposure notes before sharing results", `success_score` 100 (the
 same unmeetable-prediction mistake §8 records making), and a `test_command` naming an `eval.py`
-this repo does not contain. The real judge, `.apol/benchmarks/teacher_prompt_score.py`, had been
-committed all along and nothing pointed at it.
+this repo does not contain. The real judge script had been committed all along and nothing
+pointed at it.
 
 **The sweep reported it conformant.** That is the part worth keeping:
 
@@ -434,7 +436,7 @@ apol validate --all            ->  2/3 conformant, exit 1
 
 `--no-run` skips the judge dry-run, and `--no-run` is what APOL's own `docs/ci.md` recommends for
 CI, so the configuration most likely to run automatically was the one that could not catch a judge
-naming a script nobody wrote. Fixed upstream in `iksnerd/apol` `c9f4593`: `missingCommandScripts`
+naming a script nobody wrote. Fixed upstream: the validator now
 checks `test_command`, `holdout_test_command` and `final_test_command` statically. Commands already
 run as whitespace-split argv, so the tokens are literal paths and need no shell to resolve; tokens
 carrying shell or glob syntax are skipped rather than guessed at.

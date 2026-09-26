@@ -23,7 +23,7 @@ gen ──> label ──> split ──> export ──> train ──> convert ─
 | export | our labels to the layout Laya's fine-tune notebook reads | local | built |
 | train | RLCD fine-tune of Laya | upstream PyTorch project, Modal A10G | built (v1, FINDINGS §10) |
 | convert | `laya-mlx convert`, then a torch-vs-MLX agreement check on the test split | laya-mlx | built; parity 160/160 (§13) |
-| eval | student accuracy, macro-F1, ECE against the teacher ceiling | `scripts/eval_*.py`, APOL scorecards | built except ECE |
+| eval | student accuracy, macro-F1, ECE against the teacher ceiling | `verdict bench`, `verdict calibrate` | built except ECE |
 
 Run: `uv run python -m verdict.pipeline --config configs/v1.json --run-dir runs/v1 --stage all`
 (`configs/dev.json` is the smaller, cheaper one).
@@ -48,35 +48,6 @@ uses it by pointing `[model].path` at a local copy. verdict itself defaults to b
 - **Real data is a held-out sanity set, never training data, and never sent to a hosted API
   without asking.** Real messages can hold personal data and secrets, so they stay out of the
   repository and out of any prompt to a hosted model.
-
-## Where APOL fits
-
-APOL is the benchmark and optimization harness. Two jobs, different maturity:
-
-1. **Scorecards (`apol bench` / `apol gate`).** Three are built and live in `.apol/`:
-   `teacher-agreement` (the label ceiling), `teacher-prompt`, and `router-accuracy` (the
-   big-vs-small switch on its held-out split, gated at 60 against a chance baseline of 50).
-   `apol validate --all --no-run` sweeps all three and exits non-zero on any failure; it needs
-   no API key, which is why it is the CI form. All three have been run end to end
-   (`apol bench <name>`): 70.83, 88.57 and 86.30, every prediction met. `teacher-prompt` needs
-   `GOOGLE_API_KEY` or `GEMINI_API_KEY` for a cold run, but its 86 states are all in
-   `runs/dev/prompt_cache.jsonl`, so reruns cost nothing and the spend ledger does not move. Each is a config plus a score script
-   that imports our own metric code and writes JSON, with an integer `perfect_score` (use a share
-   out of 100) and `inputs[]` pinned by sha256. Built: teacher agreement (the ceiling),
-   teacher prompt, router accuracy. Still planned: generator fidelity, student accuracy against
-   the ceiling, calibration (ECE). MLX-vs-torch parity was measured once by hand (FINDINGS §13,
-   160/160) and has not been made a scorecard.
-2. **The optimizer (Scientist edits a `target_file`, a `test_command` scores it).** This is the
-   "autoresearch" part. The best targets are text artifacts with a cheap, honest score:
-   - the **teacher prompt** (score: agreement with the Pro reference on a dev split, cost as a
-     penalty). Cleanest first target: API-only, cents per iteration, ground truth fixed.
-   - the **generator prompt** (score: share of states whose teacher-assigned kind matches the
-     intended type, plus a diversity floor).
-   - the **question bank** (which properties are learnable: high teacher agreement, low overlap).
-   Use APOL's tri-split (train, holdout, frozen final test) so the loop cannot overfit its own
-   dev set. **Caveat:** an earlier APOL optimizer evaluated only the default values and never
-   applied a candidate; it was later fixed upstream. Do not rely on a loop until a run shows more
-   than one distinct evaluated value.
 
 ## Open decisions
 

@@ -38,6 +38,9 @@ PRIVATE = (
     "~/.claude/projects",
     "iksnerd/verdict-train",
     "apol-findings",
+    "iksnerd/apol",
+    ".apol/",
+    "iksnerd/personal-skills",
 )
 
 

@@ -25,3 +25,7 @@ skill/verdict/evals/results/
 
 # Machine-specific agent notes (Claude Code loads it alongside CLAUDE.md).
 CLAUDE.local.md
+
+# Skill changelogs are private notes kept outside this repo; locally they are symlinked here.
+plugins/verdict/skills/verdict/EVOLUTION.md
+.claude/skills/verdict-release/EVOLUTION.md

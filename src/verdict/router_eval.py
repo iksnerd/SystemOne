@@ -1,9 +1,8 @@
 """Scoring the big-vs-small switch against `evals/router_prompts.jsonl`.
 
-This lives in the package rather than in `scripts/` so the APOL scorecard and the command line
-call the same code. That is the rule the teacher-agreement scorecard already follows: a score
-script imports the project's metric and never reimplements it, so the scorecard and the repo
-cannot disagree about the number.
+This lives in the package so every caller (the refit script, tests, any scorecard) runs the same
+code: a score script imports the project's metric and never reimplements it, so a scorecard and
+the repo cannot disagree about the number.
 
 Two things here are deliberate and are the reason §12's 83.3% was worthless:
 

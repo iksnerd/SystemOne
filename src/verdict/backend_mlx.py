@@ -2,7 +2,7 @@
 
 This is the HTTP seam: a `DecideRequest` in, a validated `DecideResponse` out. It is a thin
 translation layer over an `Engine` (`engine.py`), which is the batch seam and the thing that
-actually loads the checkpoint. Bulk callers such as the scorers in `scripts/` use the `Engine`
+actually loads the checkpoint. Bulk callers such as scoring scripts use the `Engine`
 directly rather than paying for pydantic on every question.
 
 The port is the `mizorewww/laya-mlx` project on GitHub, which is what `pip install laya-mlx` builds

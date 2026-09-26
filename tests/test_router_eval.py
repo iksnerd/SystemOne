@@ -83,7 +83,7 @@ def test_evaluate_reports_the_held_out_split_not_the_whole_set():
 
 
 def test_evaluate_puts_the_score_where_the_scorecard_reads_it():
-    """`.apol/benchmarks/router-accuracy.json` reads `$.score` as a share out of 100."""
+    """A scorecard reads `score` as a share out of 100."""
     rows, probs = rows_and_probs()
     r = evaluate(rows, probs)
     assert isinstance(r["score"], float) and 0.0 <= r["score"] <= 100.0

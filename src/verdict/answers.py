@@ -5,10 +5,8 @@ came through the API, and a plain dict when it came straight off `laya_mlx.predi
 answer carries a single `noul` probability where a `choice` or `score` answer carries a
 distribution, so anything that treats questions uniformly has to bridge that.
 
-Before this module, five call sites hand-rolled the `noul` to `{"true", "false"}` conversion
-(`pipeline/export.py`, `train/parity.py` twice, `train/items.py`, `scripts/eval_student.py`) and two
-hand-rolled the dict-or-attribute access (`router.py`, `switch.py`), each with its own fallback
-behaviour. The convention lives here now, so changing it is one edit rather than five.
+The `noul` to `{"true", "false"}` conversion and the dict-or-attribute access live here, once, so
+the pipeline, training and the router all agree and changing the convention is one edit.
 
 The `"true"` / `"false"` keys are not arbitrary: they are the option names the Gemini teachers are
 told to use (`label/teacher.py`) and the names Laya's training format expects, so they are wire

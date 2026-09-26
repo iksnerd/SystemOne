@@ -1,11 +1,8 @@
 """Scoring functions the scorers share.
 
-Each of these existed in `scripts/` in at least two copies with slightly different details: two
-bootstrap routines with different iteration counts and percentile arithmetic (`eval_real.ci` at
-1000 iterations indexing [25] and [974], `eval_router.bootstrap_ci` at 4000 indexing by fraction),
-and a total-variation distance that only one scorer had. Different numbers from the same intent is
-the failure mode worth removing; the interval is now one implementation with the sample count
-visible at the call site.
+One implementation of each, so two scorers can never report different numbers for the same
+intent: the bootstrap interval takes its sample count at the call site, and every scorer shares
+the same total-variation distance.
 """
 from __future__ import annotations
 
