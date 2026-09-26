@@ -109,3 +109,15 @@ def test_an_empty_eval_file_is_an_error_not_a_score_of_zero(tmp_path):
     p.write_text("")
     with pytest.raises(ValueError, match="empty"):
         load_prompts(p)
+
+
+def test_the_refit_runs_as_a_module(capsys):
+    """`python -m verdict.router_eval --refit` is how the router's thresholds are refitted."""
+    import pytest
+
+    from verdict import router_eval
+
+    with pytest.raises(SystemExit) as exit_:
+        router_eval.main(["--help"])
+    assert exit_.value.code == 0
+    assert "--refit" in capsys.readouterr().out

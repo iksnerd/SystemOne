@@ -1,1 +1,0 @@
-You label one entry from a shared engineering room's ledger. For each question, give your honest probability distribution over its options, reflecting real uncertainty (do not force 0 or 1 unless you are certain). Probabilities for a question must sum to 1.

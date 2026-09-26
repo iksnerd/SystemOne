@@ -58,5 +58,5 @@ Two things about the 70.8% still hold as method:
 - The questions are upstream's, not invented here. Phrased the way the checkpoint was trained,
   they scored AUC 0.88 against 0.81 for invented ones (§14).
 
-Reproduce with `uv run python scripts/eval_router.py --refit`, or gate it with
+Reproduce with `uv run python -m verdict.router_eval --refit`, or gate it with
 `apol validate --all --no-run`.

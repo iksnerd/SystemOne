@@ -124,7 +124,7 @@ Do not re-derive these. Each is measured, in `docs/FINDINGS.md`.
 - `uv run verdict decide "<state>" --questions <file.json>` is the general path: your own typed
   questions, nothing routed and nothing dispatched. `--check` tokenizes the options to report exact
   truncation and costs about 1.3 s, so it is opt-in; without it a character pre-filter warns.
-- `uv run python scripts/eval_router.py --refit`
+- `uv run python -m verdict.router_eval --refit`
 
 
 ## Running models locally
