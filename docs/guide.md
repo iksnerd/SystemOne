@@ -141,7 +141,7 @@ Run a secret scan before using transcripts: one in 2,348 prompts held a live cre
 | one item, or a few dozen | read them yourself | you're more accurate, and it fits in one read |
 | a yes/no about what the text shows, over hundreds of items | **verdict** | matched Claude Haiku 4.5 (0.77 vs 0.73 AUC), free and local (§32) |
 | anything that must stay on your machine | **verdict** | nothing leaves it |
-| sorting into several categories, or anything needing world knowledge | a small LLM, if the data may leave the machine | Haiku 0.67 vs verdict 0.48 on 7 commit types (§32) |
+| sorting into several categories, or anything needing world knowledge | a small LLM, if the data may leave the machine | Haiku 0.67 vs verdict 0.44 to 0.48 on 7 commit types (§32, §41) |
 | more than 20 options | a shortlist first, yes/no per option, or an LLM | options share one token budget; 77 options scored 0.43 (§41). verdict refuses past 20 |
 | long documents | an LLM, or split the text | only the first 128 tokens are read; verdict warns when a state is far past that |
 | consequences, difficulty, counting, dates, pulling out values | an LLM | nothing on the page answers them; the first two score at chance (§25, §29) |
@@ -174,7 +174,7 @@ calibrating on real labels is how you find out whether such a question works for
 its own labels instead of the text: "Is `text` positive?" ranked reviews at 0.79 and put every
 positive one under 0.5; the same words as a no/yes choice rank at 0.96, and spam and injection
 are unchanged (§33, §38). `--true`/`--false` descriptions become the two options' descriptions.
-On the fine-tune, the library's measured yes/no questions keep the shape they were measured in; on any other checkpoint they are rewritten too (§40). `--yesno` sends a
+`--yesno` sends a
 plain yes/no.
 
 Naming both sides yourself is at least as good, and says what each side means:

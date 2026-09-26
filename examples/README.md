@@ -14,7 +14,7 @@ Check a bank without loading a model using `verdict validate -q examples/<name>/
 add `--json` for an agent-readable validation result. Add `--server-only` to `decide` to fail
 with exit status 2 if the server is unavailable, instead of loading a local fallback model.
 
-The output below is real, from the fine-tuned checkpoint, and includes the misses, because
+The output below is real, from the default model (base Laya), and includes the misses, because
 knowing what it gets wrong is the point.
 
 | example | question types | what it shows |
@@ -31,32 +31,30 @@ knowing what it gets wrong is the point.
 names a next step.
 
 ```
-done 0.73  blocked 0.18  next 0.29  | Shipped: v2.1 is tagged and pushed, CI green, ...
-done 0.30  blocked 0.85  next 0.25  | Blocked on the vendor's API key; asked them on Monday, ...
-done 0.20  blocked 0.45  next 0.87  | Next: add the retry wrapper around the upload client, ...
-done 0.70  blocked 0.15  next 0.16  | Merged the fix and closed the issue. Nothing left open here.
-done 0.27  blocked 0.60  next 0.58  | Draft RFC posted for review, waiting on feedback ...
-done 0.26  blocked 0.70  next 0.37  | Working tree has the refactor, not committed yet; ...
+done 0.96  blocked 0.08  next 0.23  | Shipped: v2.1 is tagged and pushed, CI green, ...
+done 0.17  blocked 0.97  next 0.12  | Blocked on the vendor's API key; asked them on Monday, ...
+done 0.05  blocked 0.12  next 0.99  | Next: add the retry wrapper around the upload client, ...
+done 0.94  blocked 0.10  next 0.04  | Merged the fix and closed the issue. Nothing left open here.
+done 0.13  blocked 0.39  next 0.52  | Draft RFC posted for review, waiting on feedback ...
+done 0.10  blocked 0.64  next 0.34  | Working tree has the refactor, not committed yet; ...
 ```
 
-The top score in each column is the right row. `done` is a measured library question and is asked
-as a yes/no; `blocked` and `next` are asked as no/yes choices, which spread the right rows further
-from the rest (0.72 to 0.85 and 0.87 against the plain yes/no). Read the columns as rankings: a
-0.60 does not mean "blocked" until you have fitted a cut.
+The top score in each column is the right row. Read the columns as rankings: a 0.64 does not mean
+"blocked" until you have fitted a cut.
 
 ## secret-commands/
 
 `commands.jsonl` has twelve commands; `labelled.jsonl` has 24 more with a `label`, for `calibrate`.
 
 ```
-0.69  echo $STRIPE_SECRET_KEY
-0.63  gh auth token
-0.59  cat ~/.aws/credentials
-0.59  printenv | grep TOKEN
-0.54  grep API_KEY .env.local
-0.40  git log --oneline -5
-0.31  ls -la src/
-0.27  vercel env pull --environment=production .env     <- a miss
+0.98  gh auth token
+0.96  echo $STRIPE_SECRET_KEY
+0.96  printenv | grep TOKEN
+0.94  cat ~/.aws/credentials
+0.93  grep API_KEY .env.local
+0.30  git log --oneline -5
+0.15  vercel env pull --environment=production .env     <- a miss
+0.11  git push origin main
 ...
 ```
 
@@ -66,7 +64,7 @@ secret, so a surface reader ranks it low. That is the same miss it made on 400 r
 
 ```sh
 verdict calibrate examples/secret-commands/labelled.jsonl -q examples/secret-commands/bank.json --out fit.json
-# secrets: cut 0.4614  held-out AUC 0.9  balanced accuracy 0.9  (n=24, 12 positive)
+# secrets: cut 0.5929  held-out AUC 0.9  balanced accuracy 0.9  (n=24, 12 positive)
 verdict ask '{"command": "cat ~/.netrc"}' "Does \`command\` read, print or change a secret, key, token or credential?" --cut fit.json
 ```
 
@@ -77,16 +75,16 @@ verdict ask '{"command": "cat ~/.netrc"}' "Does \`command\` read, print or chang
 One bank asks all three types at once, about a `message` field.
 
 ```
-refund   urgency 1.93/3  churn 0.57  | I was charged twice ... refund ... or I'm cancelling.
-bug      urgency 2.15/3  churn 0.14  | The dashboard shows a blank page ... whole team is blocked.
-question urgency 1.77/3  churn 0.25  | How do I export my data as CSV?
-bug      urgency 1.72/3  churn 0.23  | Checkout fails with error 502 every time, we launch tomorrow.
-bug      urgency 1.55/3  churn 0.72  | Thinking about switching to a competitor ...    <- intent is wrong
+refund   urgency 1.97/3  churn 0.80  | I was charged twice ... refund ... or I'm cancelling.
+bug      urgency 1.97/3  churn 0.02  | The dashboard shows a blank page ... whole team is blocked.
+question urgency 1.85/3  churn 0.10  | How do I export my data as CSV?
+bug      urgency 1.91/3  churn 0.06  | Checkout fails with error 502 every time, we launch tomorrow.
+other    urgency 1.33/3  churn 0.86  | Thinking about switching to a competitor ...
 ```
 
-`churn` ranks the two right messages on top. `intent` is right for refunds, bugs and questions,
-but calls the competitor message a bug. `urgency` is squeezed into 1.3 to 2.2 and puts "we launch
-tomorrow" below a CSV question: an ordinal scale on a small sample is the weakest of the three.
+`churn` ranks the two right messages on top, and `intent` is right on all five. `urgency` is the
+weak one: it puts a CSV how-to question (1.85) nearly level with "we launch tomorrow" (1.91). An
+ordinal scale on a small sample is the weakest of the three types.
 
 ## ticket-search/
 
@@ -100,16 +98,16 @@ verdict rank scored.jsonl says_broken=1 has_deadline=1 -k 3
 ```
 
 ```
- 1.67  says_broken +1.00  has_deadline +0.67  | Checkout fails with error 502 every time, we launch tomorrow.
- 1.60  has_deadline +0.93  says_broken +0.67  | We need the SSO fix before our audit on Friday or we'll ...
- 1.47  has_deadline +1.00  says_broken +0.47  | I was charged twice this month. Please refund ...  <- not broken
+ 1.80  says_broken +1.00  has_deadline +0.80  | Checkout fails with error 502 every time, we launch tomorrow.
+ 1.53  has_deadline +1.00  says_broken +0.53  | We need the SSO fix before our audit on Friday or we'll ...
+ 1.40  has_deadline +0.93  says_broken +0.47  | I was charged twice this month. Please refund ...  <- not broken
 ```
 
 The two right tickets are on top. The third is there on its deadline ("today"), and the numbers
-say so. Unscaled, `says_broken` (up to 0.92) swamped `has_deadline` (at most 0.65) and put the
-charged-twice ticket second; `rank` rescales each dimension to its percentile first (FINDINGS §39).
-Some dimensions miss: "we launch tomorrow" scored 0.27 on `has_deadline` and "the money still left
-my account" 0.41 on `about_money`, so check each question's spread before trusting a sum of them.
+say so. `rank` rescales each dimension to its percentile before summing, which matters when one
+question's answers spread much wider than another's (FINDINGS §39). Some dimensions miss: "we
+launch tomorrow" scored 0.15 on `has_deadline` and "the money still left my account" 0.20 on
+`about_money`, so check each question's spread before trusting a sum of them.
 
 ## commit-kinds/
 
@@ -126,5 +124,6 @@ test      | run the test suite on tag pushes only        <- should be ci
 ```
 
 Five of seven are right. The two misses are the ones that need knowing what the words refer to.
-On 125 real commits, Claude Haiku 4.5 scored 0.67 here against verdict's 0.48 (FINDINGS §32), so
-for categories like these, use a small LLM if the data may leave the machine.
+On 420 real commits the default model is right 44% of the time (FINDINGS §41), where Claude Haiku
+4.5 reached 67% on a similar set (FINDINGS §32), so for categories like these, use a small LLM if
+the data may leave the machine.
