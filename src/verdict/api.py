@@ -1,0 +1,181 @@
+from __future__ import annotations
+
+from fastapi import FastAPI, HTTPException
+
+from pydantic import BaseModel, field_validator
+
+from .backend import Backend, UniformBackend, UnknownModel
+from .router import BIG_SMALL
+from .schema import (
+    DecideRequest,
+    DecideResponse,
+    ModelCard,
+    ModelList,
+    SystemOneRequest,
+    SystemOneResponse,
+    Usage,
+)
+
+
+#: Cap on one batch request. Each prompt is a separate forward pass (the port has no cross-state
+#: batching), so a request's cost is linear in this and an uncapped one is an easy way to hang the
+#: server for minutes on a single call.
+MAX_BATCH = 512
+
+
+class RouteRequest(BaseModel):
+    prompt: str
+
+
+class RouteResponse(BaseModel):
+    model: str
+    branch: str
+    reason: str
+    scores: dict[str, float]
+
+
+class BatchRouteRequest(BaseModel):
+    prompts: list[str]
+
+    @field_validator("prompts")
+    @classmethod
+    def _within_limits(cls, v: list[str]) -> list[str]:
+        if not v:
+            raise ValueError("prompts must not be empty")
+        if len(v) > MAX_BATCH:
+            raise ValueError(f"at most {MAX_BATCH} prompts per request, got {len(v)}")
+        return v
+
+
+class BatchRouteItem(BaseModel):
+    index: int
+    branch: str
+    reason: str
+    scores: dict[str, float]
+
+
+class BatchRouteResponse(BaseModel):
+    model: str
+    results: list[BatchRouteItem]
+
+
+#: Jev model names that select one of ours. Anything else, `jev-latest` included, is the served
+#: checkpoint: a client written for Jev names Jev's models, and refusing them would break it.
+_OUR_MODELS = {"english", "multilingual"}
+
+
+def to_decide_request(body: dict | SystemOneRequest) -> DecideRequest:
+    """A Jev `/v1/systemone` request as ours."""
+    req = body if isinstance(body, SystemOneRequest) else SystemOneRequest.model_validate(body)
+    return DecideRequest(state=req.state, questions=req.questions,
+                         model=req.model if req.model in _OUR_MODELS else None)
+
+
+def _release_date(backend: Backend) -> str:
+    """The checkpoint's date on disk, or today when it is not a local path (a Hub id, uniform)."""
+    import datetime
+    from pathlib import Path
+
+    path = Path(str(getattr(backend, "model_id", "")))
+    stamp = path.stat().st_mtime if path.exists() else datetime.datetime.now().timestamp()
+    return datetime.date.fromtimestamp(stamp).isoformat()
+
+
+def create_app(backend: Backend | None = None) -> FastAPI:
+    """A decision API: every endpoint answers, none of them runs anything."""
+    backend = backend or UniformBackend()
+    app = FastAPI(title="verdict", version="0.0.1")
+
+    @app.get("/healthz")
+    def healthz():
+        return {"status": "ok", "backend": backend.name}
+
+    @app.post("/v1/decide", response_model=DecideResponse, response_model_exclude={"usage"})
+    def decide(request: DecideRequest) -> DecideResponse:
+        try:
+            return backend.decide(request)
+        except UnknownModel as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @app.post("/v1/systemone", response_model=SystemOneResponse)
+    def systemone(request: SystemOneRequest) -> SystemOneResponse:
+        """TypeSafe's Jev protocol, so its SDKs and tools can point here with
+        `TYPESAFE_BASE_URL`. Same answers as `/v1/decide`, plus `usage`. The bearer key the SDK
+        insists on is ignored: the server binds to localhost."""
+        try:
+            out = backend.decide(to_decide_request(request))
+        except UnknownModel as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return SystemOneResponse(model=out.model, answers=out.answers,
+                                 usage=out.usage or Usage(input_tokens=0))
+
+    @app.get("/v1/models", response_model=ModelList)
+    def models() -> ModelList:
+        date = _release_date(backend)
+        cards = [
+            ModelCard(name="jev-latest", release_date=date,
+                      description=f"Alias for the served checkpoint, {backend.name}. "
+                                  "Any model name not listed here also selects it."),
+            ModelCard(name="english", release_date=date,
+                      description=f"The served checkpoint, {backend.name}."),
+        ]
+        if getattr(backend, "multilingual_id", None):
+            cards.append(ModelCard(name="multilingual", release_date=date,
+                                   description=f"laya's multilingual checkpoint, "
+                                               f"{backend.multilingual_id}; loaded on first use."))
+        return ModelList(models=cards)
+
+    def _answers_for(prompt: str):
+        """Clip, then ask the backend. Clipping here keeps the HTTP path the one the thresholds
+        were fitted on; the CLI clips because it has a tokenizer loaded, and before this the
+        server did not, so the two front doors could disagree on a long prompt. A backend with no
+        engine (uniform) has no tokenizer and needs none."""
+        engine = getattr(backend, "engine", None)
+        if engine is not None:
+            prompt = engine.clip(prompt)
+        return backend.decide(DecideRequest(state=prompt, questions=BIG_SMALL.questions)).answers
+
+    @app.post("/v1/route", response_model=RouteResponse)
+    def route(request: RouteRequest) -> RouteResponse:
+        """Big model or small one, as a `Switch` (see `switch.py`).
+
+        The prompt is clipped to `PROMPT_TOKEN_BUDGET` tokens, the same as the CLI does, so both
+        front doors reproduce the FINDINGS §15 numbers. On the `uniform` backend every prompt
+        routes to the default branch, which is the point of having a default.
+        """
+        # Clip here too, so the HTTP path is the one the thresholds were fitted on. The CLI
+        # clips because it has a tokenizer loaded; before this the server did not, so the two
+        # front doors could disagree on a long prompt. A backend with no engine (uniform) has
+        # no tokenizer and needs none.
+        branch = BIG_SMALL.decide(_answers_for(request.prompt))
+        return RouteResponse(
+            model=backend.name, branch=branch.name, reason=branch.reason,
+            scores=branch.scores,
+        )
+
+    @app.post("/v1/route/batch", response_model=BatchRouteResponse)
+    def route_batch(request: BatchRouteRequest) -> BatchRouteResponse:
+        """Route many prompts over one connection, in order.
+
+        There is no cross-state batching underneath: each prompt is its own forward pass, so this
+        saves the per-call overhead rather than the inference. That overhead is most of the cost
+        for a caller doing many, which is the case this exists for: a client spawning one process
+        per prompt pays about 2.1 s each, and one that asks a warm server pays about 70 ms each,
+        of which 35 ms is the round trip.
+
+        Results carry `index` so a caller can pair them up without relying on ordering, though
+        ordering is preserved.
+        """
+        results = []
+        for i, prompt in enumerate(request.prompts):
+            branch = BIG_SMALL.decide(_answers_for(prompt))
+            results.append(BatchRouteItem(
+                index=i, branch=branch.name, reason=branch.reason,
+                scores=branch.scores,
+            ))
+        return BatchRouteResponse(model=backend.name, results=results)
+
+    return app
+
+
+app = create_app()

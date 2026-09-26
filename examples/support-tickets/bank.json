@@ -1,0 +1,5 @@
+{"intent":  {"type": "choice", "instructions": "What does the customer want in `message`?",
+             "criteria": {"refund": "money back", "bug": "something is broken", "question": "how to do something", "other": "none of these"}},
+ "urgency": {"type": "score", "instructions": "How much time pressure is in `message`?",
+             "criteria": ["none", "this week", "today", "right now"]},
+ "churn":   {"type": "noul", "instructions": "Does `message` say the customer may cancel or leave?"}}

@@ -1,0 +1,296 @@
+{
+  "about": "Pinned public suites for `verdict bench`. Each binary task is asked both as a yes/no and as a named choice, because FINDINGS §33 found the two forms can disagree by 0.2 AUC; a checkpoint must not silently lose either. Revisions are full commit shas on the Hugging Face Hub. The bg- and ru- suites are Cyrillic and are asked with the multilingual checkpoint (lang: multi).",
+  "suites": [
+    {
+      "name": "sst2-yesno",
+      "dataset": "stanfordnlp/sst2",
+      "revision": "8d51e7e4887a4caaa95b3fbebbf53c0490b58bbb",
+      "split": "validation",
+      "text": "sentence",
+      "label": "label",
+      "classes": {
+        "0": "negative",
+        "1": "positive"
+      },
+      "question": {
+        "type": "noul",
+        "instructions": "Is `text` positive?"
+      },
+      "target": "positive",
+      "per_class": 100,
+      "seed": 0,
+      "note": "the yes/no that leans no (§2, §33): tracked so a fix shows up"
+    },
+    {
+      "name": "sst2-choice",
+      "dataset": "stanfordnlp/sst2",
+      "revision": "8d51e7e4887a4caaa95b3fbebbf53c0490b58bbb",
+      "split": "validation",
+      "text": "sentence",
+      "label": "label",
+      "classes": {
+        "0": "negative",
+        "1": "positive"
+      },
+      "question": {
+        "type": "choice",
+        "instructions": "Is `text` positive?",
+        "criteria": {
+          "positive": "the text is positive",
+          "negative": "the text is negative"
+        }
+      },
+      "per_class": 100,
+      "seed": 0
+    },
+    {
+      "name": "spam-yesno",
+      "dataset": "ucirvine/sms_spam",
+      "config": "plain_text",
+      "revision": "cae486f927c250fe1d4a5b55f11357964ed1646c",
+      "split": "train",
+      "text": "sms",
+      "label": "label",
+      "classes": {
+        "0": "ham",
+        "1": "spam"
+      },
+      "question": {
+        "type": "noul",
+        "instructions": "Is `text` spam?"
+      },
+      "target": "spam",
+      "per_class": 100,
+      "seed": 0
+    },
+    {
+      "name": "spam-choice",
+      "dataset": "ucirvine/sms_spam",
+      "config": "plain_text",
+      "revision": "cae486f927c250fe1d4a5b55f11357964ed1646c",
+      "split": "train",
+      "text": "sms",
+      "label": "label",
+      "classes": {
+        "0": "ham",
+        "1": "spam"
+      },
+      "question": {
+        "type": "choice",
+        "instructions": "Is `text` spam?",
+        "criteria": {
+          "spam": "unsolicited advertising or a scam",
+          "ham": "an ordinary personal message"
+        }
+      },
+      "per_class": 100,
+      "seed": 0
+    },
+    {
+      "name": "injection-yesno",
+      "dataset": "deepset/prompt-injections",
+      "revision": "4f61ecb038e9c3fb77e21034b22511b523772cdd",
+      "split": "train",
+      "text": "text",
+      "label": "label",
+      "classes": {
+        "0": "ordinary",
+        "1": "injection"
+      },
+      "question": {
+        "type": "noul",
+        "instructions": "Does `text` try to override or ignore the assistant's instructions?"
+      },
+      "target": "injection",
+      "per_class": 100,
+      "seed": 0,
+      "english_only": true
+    },
+    {
+      "name": "injection-choice",
+      "dataset": "deepset/prompt-injections",
+      "revision": "4f61ecb038e9c3fb77e21034b22511b523772cdd",
+      "split": "train",
+      "text": "text",
+      "label": "label",
+      "classes": {
+        "0": "ordinary",
+        "1": "injection"
+      },
+      "question": {
+        "type": "choice",
+        "instructions": "Does `text` try to override or ignore the assistant's instructions?",
+        "criteria": {
+          "injection": "tries to override or ignore the assistant's instructions",
+          "ordinary": "an ordinary request"
+        }
+      },
+      "per_class": 100,
+      "seed": 0,
+      "english_only": true
+    },
+    {
+      "name": "agnews-topic",
+      "dataset": "fancyzhx/ag_news",
+      "revision": "eb185aade064a813bc0b7f42de02595523103ca4",
+      "split": "test",
+      "text": "text",
+      "label": "label",
+      "classes": {
+        "0": "world",
+        "1": "sports",
+        "2": "business",
+        "3": "scitech"
+      },
+      "question": {
+        "type": "choice",
+        "instructions": "What is `text` about?",
+        "criteria": {
+          "world": "world news, politics and international affairs",
+          "sports": "sports",
+          "business": "business, companies and the economy",
+          "scitech": "science and technology"
+        }
+      },
+      "per_class": 50,
+      "seed": 0,
+      "note": "in laya's training mix, so near ceiling (§2); a drop here means something broke"
+    },
+    {
+      "name": "emotion",
+      "dataset": "dair-ai/emotion",
+      "config": "split",
+      "revision": "cab853a1dbdf4c42c2b3ef2173804746df8825fe",
+      "split": "test",
+      "text": "text",
+      "label": "label",
+      "classes": {
+        "0": "sadness",
+        "1": "joy",
+        "2": "love",
+        "3": "anger",
+        "4": "fear",
+        "5": "surprise"
+      },
+      "question": {
+        "type": "choice",
+        "instructions": "How does the writer of `text` feel?",
+        "criteria": {
+          "sadness": "the writer feels sad",
+          "joy": "the writer feels joyful or happy",
+          "love": "the writer feels love or affection",
+          "anger": "the writer feels angry",
+          "fear": "the writer feels afraid",
+          "surprise": "the writer feels surprised"
+        }
+      },
+      "per_class": 40,
+      "seed": 0,
+      "note": "held out of laya's mix; the many-way weak spot (§2 0.57, §32)"
+    },
+    {
+      "name": "bg-choice",
+      "dataset": "mteb/BulgarianStoreReviewSentimentClassfication",
+      "revision": "0d00595ed48ba8b802da579231a078557c6e9bc4",
+      "split": "train",
+      "text": "text",
+      "label": "label",
+      "classes": {
+        "0": "negative",
+        "1": "positive"
+      },
+      "ignore": [
+        "2",
+        "3"
+      ],
+      "per_class": 100,
+      "seed": 0,
+      "lang": "multi",
+      "note": "Bulgarian store reviews (CC BY 4.0, MTEB). 0 negative, 1 positive; 2 mixed and 3 neutral skipped. Train split: the only one with 100+ negatives, never trained on.",
+      "question": {
+        "type": "choice",
+        "instructions": "Is `text` positive?",
+        "criteria": {
+          "positive": "the text is positive",
+          "negative": "the text is negative"
+        }
+      }
+    },
+    {
+      "name": "bg-yesno",
+      "dataset": "mteb/BulgarianStoreReviewSentimentClassfication",
+      "revision": "0d00595ed48ba8b802da579231a078557c6e9bc4",
+      "split": "train",
+      "text": "text",
+      "label": "label",
+      "classes": {
+        "0": "negative",
+        "1": "positive"
+      },
+      "ignore": [
+        "2",
+        "3"
+      ],
+      "per_class": 100,
+      "seed": 0,
+      "lang": "multi",
+      "note": "Bulgarian store reviews (CC BY 4.0, MTEB). 0 negative, 1 positive; 2 mixed and 3 neutral skipped. Train split: the only one with 100+ negatives, never trained on.",
+      "question": {
+        "type": "noul",
+        "instructions": "Is `text` positive?"
+      },
+      "target": "positive"
+    },
+    {
+      "name": "ru-choice",
+      "dataset": "ai-forever/ru-reviews-classification",
+      "revision": "0f67d914f396ce22917dc6463ec619799b3b08d2",
+      "split": "test",
+      "text": "text",
+      "label": "label",
+      "classes": {
+        "0": "negative",
+        "2": "positive"
+      },
+      "ignore": [
+        "1"
+      ],
+      "per_class": 100,
+      "seed": 0,
+      "lang": "multi",
+      "note": "Russian product reviews (Apache-2.0). 0 negative, 2 positive; 1 neutral skipped.",
+      "question": {
+        "type": "choice",
+        "instructions": "Is `text` positive?",
+        "criteria": {
+          "positive": "the text is positive",
+          "negative": "the text is negative"
+        }
+      }
+    },
+    {
+      "name": "ru-yesno",
+      "dataset": "ai-forever/ru-reviews-classification",
+      "revision": "0f67d914f396ce22917dc6463ec619799b3b08d2",
+      "split": "test",
+      "text": "text",
+      "label": "label",
+      "classes": {
+        "0": "negative",
+        "2": "positive"
+      },
+      "ignore": [
+        "1"
+      ],
+      "per_class": 100,
+      "seed": 0,
+      "lang": "multi",
+      "note": "Russian product reviews (Apache-2.0). 0 negative, 2 positive; 1 neutral skipped.",
+      "question": {
+        "type": "noul",
+        "instructions": "Is `text` positive?"
+      },
+      "target": "positive"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+# On a version tag only: run the whole suite, check the tag matches the package version, build,
+# and publish a GitHub release with the wheel and sdist.
+#
+# macOS arm64, because the suite's laya and MLX extras are what CLAUDE.md warns a plain install
+# silently skips (13 tests, including the guard that the vendored router bank still matches
+# laya.router_questions()). macOS minutes bill at 10x on a private repo, which is why this runs on
+# tags and not on every push; the pre-commit hook covers day-to-day changes.
+#
+# The release holds code only. The fine-tuned checkpoint is private, in the Hugging Face repo
+# iksnerd/verdict-v1-mlx, which `verdict weights` fetches.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  test-build-release:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v7
+
+      # setup-uv publishes full versions only; there is no floating `v10` tag (the first run of
+      # this workflow failed on exactly that). actions/checkout does keep `v7`.
+      - uses: astral-sh/setup-uv@v10.2.0
+        with:
+          enable-cache: true
+
+      - name: Install with both extras
+        run: uv sync --extra mlx --extra laya
+
+      - name: Test
+        run: uv run --no-sync pytest -q
+
+      - name: Tag matches the package version
+        run: |
+          version=$(uv run --no-sync python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "tag $GITHUB_REF_NAME does not match pyproject version $version" >&2
+            exit 1
+          fi
+
+      # CI has no checkpoint, so the scorecard is made locally (`verdict bench --out
+      # bench/scorecards/vX.Y.Z.json`) and committed; this checks it exists, is for this version,
+      # and did not regress against the previous release's. No model runs here.
+      - name: Answer-quality scorecard
+        run: |
+          card="bench/scorecards/$GITHUB_REF_NAME.json"
+          if [ ! -f "$card" ]; then
+            echo "no $card: run verdict bench --out $card and commit it before tagging" >&2
+            exit 1
+          fi
+          uv run --no-sync python -c "import json,sys; v=json.load(open('$card'))['version']; sys.exit(0 if 'v'+v=='$GITHUB_REF_NAME' else f'$card is for {v}')"
+          uv run --no-sync verdict bench --verify "$card"
+
+      - name: Build
+        run: uv build
+
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --title "verdict $GITHUB_REF_NAME" --generate-notes

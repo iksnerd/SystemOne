@@ -1,0 +1,24 @@
+{"state": {"command": "aws secretsmanager get-secret-value --secret-id prod/db"}, "label": true}
+{"state": {"command": "gh auth token"}, "label": true}
+{"state": {"command": "cat ~/.ssh/id_ed25519"}, "label": true}
+{"state": {"command": "echo $STRIPE_SECRET_KEY"}, "label": true}
+{"state": {"command": "cat README.md"}, "label": false}
+{"state": {"command": "cat ~/.aws/credentials"}, "label": true}
+{"state": {"command": "printenv | grep TOKEN"}, "label": true}
+{"state": {"command": "make build"}, "label": false}
+{"state": {"command": "grep -rn TODO src/"}, "label": false}
+{"state": {"command": "docker ps"}, "label": false}
+{"state": {"command": "npm test"}, "label": false}
+{"state": {"command": "vercel env pull --environment=production .env"}, "label": true}
+{"state": {"command": "grep API_KEY .env.local"}, "label": true}
+{"state": {"command": "git log --oneline -5"}, "label": false}
+{"state": {"command": "heroku config:get DATABASE_URL"}, "label": true}
+{"state": {"command": "ls -la src/"}, "label": false}
+{"state": {"command": "uv run pytest -q"}, "label": false}
+{"state": {"command": "du -sh ~/Downloads"}, "label": false}
+{"state": {"command": "python3 -m http.server 8000"}, "label": false}
+{"state": {"command": "security find-generic-password -s github -w"}, "label": true}
+{"state": {"command": "kubectl get secret db-password -o yaml"}, "label": true}
+{"state": {"command": "git push origin main"}, "label": false}
+{"state": {"command": "export OPENAI_API_KEY=$(op read op://dev/openai/key)"}, "label": true}
+{"state": {"command": "rm -rf node_modules"}, "label": false}

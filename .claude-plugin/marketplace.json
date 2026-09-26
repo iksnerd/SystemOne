@@ -1,0 +1,15 @@
+{
+  "name": "verdict",
+  "owner": {
+    "name": "iksnerd"
+  },
+  "metadata": {
+    "description": "The verdict agent skill: when and how an agent should use the local verdict CLI for fast typed judgments over many texts."
+  },
+  "plugins": [
+    {
+      "name": "verdict",
+      "source": "./plugins/verdict"
+    }
+  ]
+}

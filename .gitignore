@@ -1,0 +1,27 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+.env.local
+data/
+models/
+artifacts/
+.apol/runs/
+
+# Pipeline outputs: regenerable, and the .pt item files are large binaries.
+runs/
+apol.db
+
+# Local experiments, some reading private data; never versioned.
+experiments/
+
+# Written by `verdict init`, and machine-specific: model paths, ports, and which local
+# models you happen to have pulled.
+verdict.toml
+
+# `claude plugin eval` run output.
+skill/verdict/evals/results/
+
+# Machine-specific agent notes (Claude Code loads it alongside CLAUDE.md).
+CLAUDE.local.md

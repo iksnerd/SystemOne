@@ -1,0 +1,4 @@
+{"kind": {"type": "choice", "instructions": "What kind of change does `subject` describe?",
+  "criteria": {"feat": "a new feature or capability", "fix": "a bug fix", "docs": "documentation only",
+               "refactor": "restructuring code without changing behaviour", "test": "tests only",
+               "chore": "maintenance, dependencies or housekeeping", "ci": "CI or build pipeline configuration"}}}

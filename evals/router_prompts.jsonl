@@ -1,0 +1,72 @@
+{"id": "small-00", "prompt": "what does chmod 755 mean", "want": "small", "split": "train", "note": ""}
+{"id": "small-01", "prompt": "what's the capital of Portugal", "want": "small", "split": "train", "note": ""}
+{"id": "small-02", "prompt": "convert 15 miles to kilometres", "want": "small", "split": "train", "note": ""}
+{"id": "small-03", "prompt": "what does the -v flag do in docker run", "want": "small", "split": "train", "note": ""}
+{"id": "small-04", "prompt": "spell check this: recieve, seperate, occurence", "want": "small", "split": "train", "note": ""}
+{"id": "small-05", "prompt": "what year was Python 3 released", "want": "small", "split": "train", "note": ""}
+{"id": "small-06", "prompt": "summarise this in one line: the meeting agreed to postpone the launch", "want": "small", "split": "train", "note": ""}
+{"id": "small-07", "prompt": "is 91 a prime number", "want": "small", "split": "train", "note": ""}
+{"id": "small-08", "prompt": "what's the difference between TCP and UDP", "want": "small", "split": "train", "note": ""}
+{"id": "small-09", "prompt": "expand the acronym CORS", "want": "small", "split": "train", "note": ""}
+{"id": "small-10", "prompt": "translate 'good morning' to Japanese", "want": "small", "split": "train", "note": ""}
+{"id": "small-11", "prompt": "what command lists open ports on linux", "want": "small", "split": "train", "note": ""}
+{"id": "small-12", "prompt": "what's the git command to undo the last commit but keep the changes", "want": "small", "split": "train", "note": ""}
+{"id": "small-13", "prompt": "how do I check the python version from the command line", "want": "small", "split": "train", "note": ""}
+{"id": "small-14", "prompt": "what is 17% of 340", "want": "small", "split": "train", "note": ""}
+{"id": "small-15", "prompt": "rename this variable from usrNm to user_name", "want": "small", "split": "train", "note": ""}
+{"id": "small-16", "prompt": "what does HTTP 429 mean", "want": "small", "split": "train", "note": ""}
+{"id": "small-17", "prompt": "give me the ISO code for the Swiss franc", "want": "small", "split": "train", "note": ""}
+{"id": "small-18", "prompt": "what's the default port for postgres", "want": "small", "split": "train", "note": ""}
+{"id": "small-19", "prompt": "turn this into title case: the quick brown fox", "want": "small", "split": "train", "note": ""}
+{"id": "small-20", "prompt": "what does the 'yield' keyword do in python", "want": "small", "split": "train", "note": ""}
+{"id": "small-21", "prompt": "how many bytes in a kibibyte", "want": "small", "split": "train", "note": ""}
+{"id": "small-22", "prompt": "what's the shortcut to split the editor in vs code", "want": "small", "split": "train", "note": ""}
+{"id": "small-23", "prompt": "define idempotent in one sentence", "want": "small", "split": "train", "note": ""}
+{"id": "small-24", "prompt": "what's the current VAT rate in Germany", "want": "small", "split": "test", "note": "lookup, but mentions money: tests the is_sensitive override"}
+{"id": "small-25", "prompt": "what does LGTM stand for", "want": "small", "split": "test", "note": ""}
+{"id": "small-26", "prompt": "convert 98.6 fahrenheit to celsius", "want": "small", "split": "test", "note": ""}
+{"id": "small-27", "prompt": "what's the regex for a UK postcode", "want": "small", "split": "test", "note": "borderline: a one-liner but fiddly"}
+{"id": "small-28", "prompt": "who wrote the Go programming language spec", "want": "small", "split": "test", "note": ""}
+{"id": "small-29", "prompt": "what's the difference between == and === in javascript", "want": "small", "split": "test", "note": ""}
+{"id": "small-30", "prompt": "list the days of the week in Spanish", "want": "small", "split": "test", "note": ""}
+{"id": "small-31", "prompt": "what does 'sudo' stand for", "want": "small", "split": "test", "note": ""}
+{"id": "small-32", "prompt": "format this as JSON: name bob age 41", "want": "small", "split": "test", "note": ""}
+{"id": "small-33", "prompt": "what's the max value of a signed 32-bit integer", "want": "small", "split": "test", "note": ""}
+{"id": "small-34", "prompt": "what does the tail -f command do", "want": "small", "split": "test", "note": ""}
+{"id": "small-35", "prompt": "abbreviate 'kilometres per hour'", "want": "small", "split": "test", "note": ""}
+{"id": "big-00", "prompt": "refactor our auth middleware to support refresh tokens without breaking existing sessions", "want": "big", "split": "train", "note": ""}
+{"id": "big-01", "prompt": "we're getting intermittent 401s only on staging, same token minting as local, where do I look", "want": "big", "split": "train", "note": ""}
+{"id": "big-02", "prompt": "design a migration plan to move 40 services off a shared postgres without downtime", "want": "big", "split": "train", "note": ""}
+{"id": "big-03", "prompt": "write a property-based test suite for our decimal rounding logic", "want": "big", "split": "train", "note": ""}
+{"id": "big-04", "prompt": "our p99 latency tripled after the last deploy, here are the traces, find the regression", "want": "big", "split": "train", "note": ""}
+{"id": "big-05", "prompt": "should we adopt event sourcing for the billing domain, argue both sides", "want": "big", "split": "train", "note": ""}
+{"id": "big-06", "prompt": "port this 2000-line Go service to Rust keeping the same wire protocol", "want": "big", "split": "train", "note": ""}
+{"id": "big-07", "prompt": "review this PR for security issues, it touches session handling and CSRF", "want": "big", "split": "train", "note": ""}
+{"id": "big-08", "prompt": "debug why our kubernetes pods OOM only under a specific traffic pattern", "want": "big", "split": "train", "note": ""}
+{"id": "big-09", "prompt": "rewrite this SQL to avoid the full table scan and explain the plan change", "want": "big", "split": "train", "note": ""}
+{"id": "big-10", "prompt": "we need to choose between Kafka and Pulsar for a 3-year bet, what matters", "want": "big", "split": "train", "note": ""}
+{"id": "big-11", "prompt": "implement exactly-once delivery on top of our at-least-once queue", "want": "big", "split": "train", "note": ""}
+{"id": "big-12", "prompt": "our terraform plan wants to destroy the production RDS instance, work out why", "want": "big", "split": "train", "note": ""}
+{"id": "big-13", "prompt": "design a rate limiter that works across 12 stateless edge nodes", "want": "big", "split": "train", "note": ""}
+{"id": "big-14", "prompt": "this goroutine leak only shows up after 6 hours, help me instrument it", "want": "big", "split": "train", "note": ""}
+{"id": "big-15", "prompt": "write the data model for multi-tenant billing with per-seat and usage pricing", "want": "big", "split": "train", "note": ""}
+{"id": "big-16", "prompt": "our CI is flaky on 3 of 400 tests, work out whether it's ordering or timing", "want": "big", "split": "train", "note": ""}
+{"id": "big-17", "prompt": "explain why this rust borrow checker error happens and restructure the code", "want": "big", "split": "train", "note": ""}
+{"id": "big-18", "prompt": "plan the rollout of a breaking API change across 8 client teams", "want": "big", "split": "train", "note": ""}
+{"id": "big-19", "prompt": "audit this dockerfile for supply chain risk and rewrite it", "want": "big", "split": "train", "note": ""}
+{"id": "big-20", "prompt": "we want read-after-write consistency on an eventually consistent store, options", "want": "big", "split": "train", "note": ""}
+{"id": "big-21", "prompt": "figure out whether this memory growth is a leak or fragmentation", "want": "big", "split": "train", "note": ""}
+{"id": "big-22", "prompt": "design the retry and backoff policy for a payment webhook consumer", "want": "big", "split": "train", "note": ""}
+{"id": "big-23", "prompt": "convert this callback-based module to async/await without changing behaviour", "want": "big", "split": "train", "note": ""}
+{"id": "big-24", "prompt": "our search relevance dropped after reindexing, diagnose it", "want": "big", "split": "test", "note": ""}
+{"id": "big-25", "prompt": "write a runbook for failing over the primary database region", "want": "big", "split": "test", "note": ""}
+{"id": "big-26", "prompt": "should this be a monorepo, given 6 teams and 3 languages", "want": "big", "split": "test", "note": ""}
+{"id": "big-27", "prompt": "find the race condition in this lock-free ring buffer implementation", "want": "big", "split": "test", "note": ""}
+{"id": "big-28", "prompt": "model the schema changes needed to support soft deletes everywhere", "want": "big", "split": "test", "note": ""}
+{"id": "big-29", "prompt": "our bundle grew 400kb last sprint, find what did it and propose cuts", "want": "big", "split": "test", "note": ""}
+{"id": "big-30", "prompt": "design an audit log that satisfies SOC2 without killing write throughput", "want": "big", "split": "test", "note": ""}
+{"id": "big-31", "prompt": "this regex is catastrophically backtracking on some inputs, fix and prove it", "want": "big", "split": "test", "note": ""}
+{"id": "big-32", "prompt": "work out the blast radius of deleting this column across the codebase", "want": "big", "split": "test", "note": ""}
+{"id": "big-33", "prompt": "write an incident postmortem from these logs and the timeline below", "want": "big", "split": "test", "note": ""}
+{"id": "big-34", "prompt": "evaluate whether we should self-host this or stay on the managed service", "want": "big", "split": "test", "note": ""}
+{"id": "big-35", "prompt": "reconcile these two conflicting specs and tell me which one the code follows", "want": "big", "split": "test", "note": ""}

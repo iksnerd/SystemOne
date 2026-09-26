@@ -1,0 +1,3 @@
+{"done":    {"type": "noul", "instructions": "Does `latest` say the work is finished, shipped or resolved?"},
+ "blocked": {"type": "noul", "instructions": "Does `latest` say the work is blocked or waiting on someone or something?"},
+ "next":    {"type": "noul", "instructions": "Does `latest` name a concrete next step that is still to do?"}}

@@ -1,0 +1,7 @@
+{
+  "name": "dev",
+  "domain": "hub_message_typing",
+  "gen": {"model": "gemma3:4b", "n": 90, "seed": 1},
+  "label": {"models": [], "reference": "gemini-3.1-pro-preview", "repeats": 1, "max_cost_usd": 1.5},
+  "split": {"test_frac": 0.2, "holdout_frac": 0.2, "seed": 0}
+}

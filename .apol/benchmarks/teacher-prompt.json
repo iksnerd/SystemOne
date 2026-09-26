@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "task_description": "Guard the teacher preamble: how often a cheap teacher labelling under `prompts/teacher_preamble.md` lands on the same decision as the Pro reference. A better preamble raises that agreement without raising spend. FINDINGS \u00a78 concluded the preamble is not the lever at this scale, so this is a regression guard on the labelling recipe rather than an active optimisation target. Operationally: needs GOOGLE_API_KEY or GEMINI_API_KEY; repeated (preamble, model, state) triples are cached in runs/dev/prompt_cache.jsonl so a rerun on a warm cache is free; spend is capped by runs/dev/optimizer_spend.json (VERDICT_OPT_CAP, default $0.90). Where no key is available, run `apol validate --all --no-run`: the static checks still apply.",
+  "target_file": "prompts/teacher_preamble.md",
+  "test_command": "uv run python .apol/benchmarks/teacher_prompt_score.py --split train --preamble prompts/teacher_preamble.md --out .apol/runs/teacher-prompt-train.json",
+  "holdout_test_command": "uv run python .apol/benchmarks/teacher_prompt_score.py --split holdout --preamble prompts/teacher_preamble.md --out .apol/runs/teacher-prompt-holdout.json",
+  "final_test_command": "uv run python .apol/benchmarks/teacher_prompt_score.py --split test --preamble prompts/teacher_preamble.md --out .apol/runs/teacher-prompt-test.json",
+  "score_from_json": {
+    "file": ".apol/runs/teacher-prompt-train.json",
+    "path": "$.score",
+    "aggregate": "first",
+    "scale": 1
+  },
+  "perfect_score": 100,
+  "max_iterations": 20,
+  "stability_samples": 2,
+  "model_name": "qwen2.5:3b",
+  "ollama_url": "http://localhost:11434",
+  "models": [
+    "gemini-2.5-flash-lite labelling under the candidate preamble, scored against a fixed gemini-3.1-pro-preview reference"
+  ],
+  "inputs": [],
+  "metric": {
+    "unit": "share (0-100) of question decisions where the cheap teacher under this preamble matches the Pro reference",
+    "scale": "higher_is_better"
+  },
+  "tuned_on": "the train split of runs/dev (54 states); holdout and frozen test are scored by the holdout and final commands",
+  "baselines": [
+    {
+      "name": "default preamble, train",
+      "score": 86.3,
+      "notes": "2026-09-20, 54 states. FINDINGS \u00a78."
+    },
+    {
+      "name": "default preamble, holdout",
+      "score": 89.47,
+      "notes": "19 states."
+    },
+    {
+      "name": "default preamble, frozen test",
+      "score": 84.62,
+      "notes": "13 states. n=13, so about \u00b114 points."
+    },
+    {
+      "name": "best candidate the optimizer found",
+      "score": 86.67,
+      "notes": "train, 2026-09-20. +0.37 over the default is ONE question decision out of 270. The whole candidate range across the run was 84.07 to 86.67, and one standard error near 0.86 at 270 decisions is about 2 points, so the trial could not tell a better preamble from the default. The default stays in use; the candidate is kept at prompts/candidates/."
+    }
+  ],
+  "contamination": {
+    "judge": [
+      "train",
+      "holdout",
+      "test"
+    ],
+    "optimizer": [
+      "train"
+    ],
+    "notes": "States are synthetic, written by gemma3:4b; reference labels are one gemini-3.1-pro-preview run and are themselves imperfect. No real message data has been sent to a hosted API. Splits are by room topic over only 25 topics, which FINDINGS \u00a78 flags as too coarse at this size."
+  },
+  "prediction": {
+    "statement": "A cheap teacher under the default preamble keeps agreeing with the Pro reference on at least 80% of question decisions. Below that, the labelling recipe has regressed and no student trained on it can be trusted. Set between the teacher-agreement floor (the `kind` question agrees least, near 80) and the observed 86.30, so a real regression fails it and the ~2-point noise band does not.",
+    "success_score": 80
+  }
+}

@@ -1,0 +1,6 @@
+{"latest": "Shipped: v2.1 is tagged and pushed, CI green, release notes published.", "topic": "search relevance"}
+{"latest": "Blocked on the vendor's API key; asked them on Monday, no reply yet.", "topic": "billing integration"}
+{"latest": "Next: add the retry wrapper around the upload client, then rerun the load test.", "topic": "uploads"}
+{"latest": "Merged the fix and closed the issue. Nothing left open here.", "topic": "login loop"}
+{"latest": "Draft RFC posted for review, waiting on feedback from the platform team.", "topic": "event bus"}
+{"latest": "Working tree has the refactor, not committed yet; tests still failing on CI.", "topic": "config loader"}

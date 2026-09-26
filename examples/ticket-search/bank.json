@@ -1,0 +1,22 @@
+{
+ "about_money": {
+  "type": "noul",
+  "instructions": "Is `message` about a charge, payment, invoice or refund?"
+ },
+ "says_broken": {
+  "type": "noul",
+  "instructions": "Does `message` say something is broken, failing or not working?"
+ },
+ "says_leaving": {
+  "type": "noul",
+  "instructions": "Does `message` say the customer will cancel, leave or switch?"
+ },
+ "has_deadline": {
+  "type": "noul",
+  "instructions": "Does `message` mention a deadline or ask for something today?"
+ },
+ "asks_how": {
+  "type": "noul",
+  "instructions": "Does `message` ask how to do something?"
+ }
+}

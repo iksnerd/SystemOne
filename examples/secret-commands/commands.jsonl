@@ -1,0 +1,12 @@
+{"command": "echo $STRIPE_SECRET_KEY"}
+{"command": "git log --oneline -5"}
+{"command": "docker ps"}
+{"command": "cat ~/.aws/credentials"}
+{"command": "ls -la src/"}
+{"command": "git push origin main"}
+{"command": "gh auth token"}
+{"command": "printenv | grep TOKEN"}
+{"command": "grep API_KEY .env.local"}
+{"command": "npm test"}
+{"command": "rm -rf node_modules"}
+{"command": "vercel env pull --environment=production .env"}

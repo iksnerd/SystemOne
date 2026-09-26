@@ -1,0 +1,38 @@
+"""Generate states with a cheap Gemini model. Same interface as OllamaClient, for when a few
+hundred states are needed faster than a local 4B model can write them (~1 s against ~11 s)."""
+from __future__ import annotations
+
+import httpx
+
+from ..label.teacher import cost_of
+
+
+class GeminiGenClient:
+    def __init__(self, model: str, key: str, temperature: float = 1.0):
+        self.model, self.key, self.temperature = model, key, temperature
+        self.tokens_in = self.tokens_out = 0
+
+    def generate(self, prompt: str, seed: int) -> str:
+        try:
+            r = httpx.post(
+                f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent",
+                headers={"x-goog-api-key": self.key},
+                json={"contents": [{"parts": [{"text": prompt}]}],
+                      "generationConfig": {"temperature": self.temperature, "maxOutputTokens": 500, "seed": seed}},
+                timeout=60,
+            )
+        except httpx.HTTPError:
+            return ""
+        if r.status_code != 200:
+            return ""
+        j = r.json()
+        u = j.get("usageMetadata", {})
+        self.tokens_in += u.get("promptTokenCount", 0)
+        self.tokens_out += u.get("candidatesTokenCount", 0)
+        try:
+            return j["candidates"][0]["content"]["parts"][0]["text"]
+        except (KeyError, IndexError):
+            return ""  # blocked or empty: the generation loop retries with a new seed
+
+    def cost_usd(self) -> float:
+        return cost_of(self.model, self.tokens_in, self.tokens_out)

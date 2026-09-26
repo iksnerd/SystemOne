@@ -1,0 +1,51 @@
+#!/bin/sh
+# verdict pre-commit: what is staged, not what is on disk.
+#
+# Enable once per clone:  git config core.hooksPath .githooks
+#
+# 1. Paths CLAUDE.md says never to commit (data, weights, runs, a DB, experiments with real data).
+# 2. A gitleaks scan of the staged diff (default rules; there is no .gitleaks.toml on purpose,
+#    since one without `[extend] useDefault = true` silently disables every rule).
+# 3. The test suite, run against a copy of the index. The working tree may hold unstaged edits
+#    that make tests pass or fail for code that is not being committed, and stashing them to hide
+#    that would disturb anyone else working in this checkout. Exporting the index touches nothing.
+set -eu
+
+repo=$(git rev-parse --show-toplevel)
+cd "$repo"
+
+forbidden=$(git diff --cached --name-only --diff-filter=ACMR |
+  grep -E '^(data|models|runs|experiments)/|(^|/)\.env($|\.)|(^|/)apol\.db$' || true)
+if [ -n "$forbidden" ]; then
+  echo "pre-commit: these must never be committed (see CLAUDE.md, Constraints):" >&2
+  echo "$forbidden" | sed 's/^/  /' >&2
+  echo "  unstage them: git restore --staged <path>" >&2
+  exit 1
+fi
+
+if command -v gitleaks >/dev/null 2>&1; then
+  if ! gitleaks git --pre-commit --staged --no-banner --redact >/dev/null 2>&1; then
+    gitleaks git --pre-commit --staged --no-banner --redact >&2 || true
+    echo "pre-commit: gitleaks found a secret in the staged changes" >&2
+    exit 1
+  fi
+else
+  echo "pre-commit: gitleaks not installed, secret scan skipped (brew install gitleaks)" >&2
+fi
+
+python="$repo/.venv/bin/python"
+if [ ! -x "$python" ]; then
+  echo "pre-commit: no .venv; run: uv sync --extra mlx --extra laya" >&2
+  exit 1
+fi
+snapshot=$(mktemp -d "${TMPDIR:-/tmp}/verdict-precommit.XXXXXX")
+trap 'rm -rf "$snapshot"' EXIT
+git checkout-index --all --prefix="$snapshot/"
+# PYTHONPATH beats the editable install, which would otherwise import the working tree.
+if ! (cd "$snapshot" && PYTHONPATH="$snapshot/src" "$python" -m pytest -q -p no:cacheprovider \
+      >"$snapshot/.pytest.log" 2>&1); then
+  tail -25 "$snapshot/.pytest.log" >&2
+  echo "pre-commit: tests fail on the staged snapshot" >&2
+  exit 1
+fi
+tail -1 "$snapshot/.pytest.log"
