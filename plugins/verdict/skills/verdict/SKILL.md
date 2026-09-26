@@ -64,7 +64,8 @@ consistent number to rank or gate on.
 1. Check the bank before anything loads: `verdict validate -q bank.json --json` needs no model
    and reports a malformed question, failed wording and option truncation (exit 2 if invalid).
 2. One model at a time on a laptop GPU: see what is already loaded (`ollama ps`,
-   `pgrep -fl 'verdict serve'`) and don't stack another on top. Short on GPU memory:
+   `pgrep -fl 'verdict.*serve'`, which also catches `python -m verdict.cli serve`) and don't
+   stack another on top. Short on GPU memory:
    `VERDICT_BITS=8` quantizes at load, about 430 MB instead of 800, with the same answers on
    every bench suite (§36).
 3. `verdict serve` in the background, once. Without it every call loads the model
@@ -72,7 +73,7 @@ consistent number to rank or gate on.
    a missing server then fails with exit 2 instead of loading the model into your process.
 4. Score a sample of 200 to 400 items first. `--jsonl` and `calibrate` already
    pause 50 ms between calls; keep it.
-5. **Stop the server when you are done** (`pkill -f 'verdict serve'`). It holds the model in GPU
+5. **Stop the server when you are done** (`pkill -f 'verdict.*serve'`). It holds the model in GPU
    memory.
 
 ## Ask the question that is on the page
@@ -96,8 +97,8 @@ Measured on real agent traffic (FINDINGS §25 to §33):
   (verdict prints it for `--jsonl`). A narrow range (0.58 to 0.65) means it separates nothing.
 - **A new yes/no is asked as a no/yes choice for you** and answered as a yes/no (`noul` = P(yes),
   `"asked_as": "choice"`). The plain form is fragile: "Is `text` positive?" ranked reviews at 0.79
-  and put no positive over 0.5; as a no/yes choice, 0.96 (§33, §38). Library yes/no questions like
-  `is_instruction` stay as measured on the fine-tune (rewritten on any other checkpoint, base Laya or multilingual, §40). Naming both sides yourself (`-o`) is at least as good.
+  and put no positive over 0.5; as a no/yes choice, 0.96 (§33, §38). Naming both sides yourself (`-o`)
+  is at least as good.
 - **verdict refuses (exit 2) what measured at chance:** a question about a consequence, difficulty
   or risk ("could this cause harm", 0.53), a yes/no about an absence ("is this ordinary", 0.32 to
   0.64), a choice past 20 options (0.43 at 77), and a state missing a field the question names.

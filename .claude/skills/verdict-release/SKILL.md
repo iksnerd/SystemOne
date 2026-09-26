@@ -38,7 +38,7 @@ Every step and check below comes from a release that went wrong without it.
    ```
    A plain `uv sync` drops the extras and silently skips the laya tests.
 
-2. **One model at a time.** `ollama ps` and `pgrep -fl 'verdict serve'` must show nothing else
+2. **One model at a time.** `ollama ps` and `pgrep -fl 'verdict.*serve'` must show nothing else
    loaded (machine-specific exceptions go in `CLAUDE.local.md`).
 
 3. **Scorecard, at normal priority, with bench's own 50 ms pause:**
