@@ -121,8 +121,8 @@ def _acceptable(text: str, accepted: list[str]) -> bool:
 
 
 def _state(domain: Domain, seed: Seed, text: str) -> dict:
-    if domain.state_style == "text":
-        return {"text": text}
+    if domain.state_style in ("text", "issue"):
+        return {domain.state_style: text}
     return {"room_topic": seed.room_topic, "author": seed.author, "message": text}
 
 

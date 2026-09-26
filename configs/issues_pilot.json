@@ -1,0 +1,7 @@
+{
+  "name": "issues_pilot",
+  "domain": "github_issue_typing",
+  "gen": {"provider": "gemini", "model": "gemini-2.5-flash-lite", "n": 1200, "seed": 11, "workers": 8},
+  "label": {"models": ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite"], "reference": null, "repeats": 1, "max_cost_usd": 1.0},
+  "split": {"test_frac": 0.1, "holdout_frac": 0.15, "seed": 0, "require_type_coverage": true}
+}

@@ -166,3 +166,54 @@ EMOTION = Domain(
     ambiguity_lead="a post where the writer",
     state_style="text",
 )
+
+
+#: GitHub issue type, the three labels of the NLBSE issue-report benchmark. The descriptions push
+#: the generator toward the hard case FINDINGS §41 found: a question that reads like a bug report.
+ISSUE_TYPES = {
+    "bug": "reports that something is broken, crashes, errors or behaves wrongly, usually with steps "
+           "to reproduce, an error message, or the versions involved",
+    "feature": "asks for a new feature, an option, or a change to how something works",
+    "question": "asks how to do something, why something behaves as it does, or for help "
+                "understanding it; it may quote an error or code the writer tried, but it does not "
+                "claim the project is broken",
+}
+
+ISSUES = Domain(
+    name="github_issue_typing",
+    types=ISSUE_TYPES,
+    confusable={"question": "bug", "bug": "question", "feature": "question"},
+    # Projects outside the NLBSE test set (react, tensorflow, vscode, bitcoin, opencv), so a gain
+    # cannot come from learning those repositories' vocabulary.
+    room_topics=(
+        "Django, a Python web framework", "pandas, a dataframe library", "Kubernetes",
+        "the Rust compiler", "Next.js", "PostgreSQL", "Home Assistant", "Flutter", "Terraform",
+        "FastAPI", "Electron", "the Go standard library", "scikit-learn", "Prometheus", "Grafana",
+        "Neovim", "Rails", "Spring Boot", "Svelte", "Tauri", "Deno", "Bun", "Pydantic", "Celery",
+        "Redis", "Elasticsearch", "Ansible", "Jupyter", "Hugging Face transformers", "PyTorch Lightning",
+        "Vite", "Tailwind CSS", "Supabase", "Prisma", "NumPy", "Matplotlib", "Kafka", "Airflow",
+        "Docker Compose", "Helm", "Godot", "Blender", "Obsidian plugins", "Home-brew formulae",
+        "the Kotlin compiler", "SwiftUI tooling", "gRPC", "SQLAlchemy", "Poetry", "pytest",
+    ),
+    authors=(
+        "a first-time contributor", "a maintainer of a downstream library", "a data scientist",
+        "a student learning the project", "a DevOps engineer", "a mobile developer",
+        "a backend engineer in a hurry", "a hobbyist", "an enterprise user on an old version",
+        "a non-native English speaker", "a security researcher", "a documentation writer",
+    ),
+    lengths=(
+        "a title and a two-sentence body",
+        "a title and a short paragraph",
+        "a title and a body with a short code or log snippet",
+        "a title and a body that follows an issue template with a few headings",
+    ),
+    intro="You are writing one GitHub issue opened by {author} on the repository of {topic}.",
+    lead="The issue",
+    style=(
+        "Put the title on the first line and the body after it. Use concrete details: versions, "
+        "file names, commands, error messages. Do not put a label or prefix such as 'Bug:', "
+        "'[Feature]' or 'Question:' in the title, and do not say what kind of issue it is."
+    ),
+    ambiguity_lead="an issue that",
+    state_style="issue",
+)

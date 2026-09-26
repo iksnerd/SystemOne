@@ -29,12 +29,15 @@ image = (
 )
 
 BASE = "convaiinnovations/laya"
+#: The base revision every fine-tune and comparison so far used. Unpinned, a download would train
+#: on whatever upstream published last, unmeasured.
+BASE_REVISION = "1c5edc17a7acd8701df6fc341c0d179f1c62c982"
 
 
 def _model_dir() -> str:
     from huggingface_hub import snapshot_download
 
-    return snapshot_download(BASE)
+    return snapshot_download(BASE, revision=BASE_REVISION)
 
 
 def _run(args: list[str]) -> None:
@@ -87,7 +90,8 @@ def upload(run: str = "v1", model_dir: str = ""):
 
     from verdict.train.items import build_items
 
-    md = Path(model_dir or snapshot_download(BASE, allow_patterns=["tokenizer/*", "rl_agent_config.json", "encoder/*"]))
+    md = Path(model_dir or snapshot_download(BASE, revision=BASE_REVISION,
+                                                       allow_patterns=["tokenizer/*", "rl_agent_config.json", "encoder/*"]))
     out = Path(f"runs/{run}/items")
     out.mkdir(parents=True, exist_ok=True)
     for name in ("train", "holdout"):

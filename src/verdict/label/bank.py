@@ -25,3 +25,16 @@ EMOTION_BANK = {
         "criteria": {e: f"the writer {d}" for e, d in EMOTION_TYPES.items()},
     },
 }
+
+
+#: Word for word the question FINDINGS §41 scores on real NLBSE issues, so a fine-tune learns the
+#: question it is tested on.
+ISSUE_BANK = {
+    "type": {
+        "type": "choice",
+        "instructions": "What does `issue` report or ask for?",
+        "criteria": {"bug": "something is broken, crashes or behaves wrongly",
+                     "feature": "a new feature or an improvement to how something works",
+                     "question": "how to do something, or help understanding something"},
+    },
+}
