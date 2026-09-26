@@ -90,7 +90,6 @@ names what went wrong without it.
 8. **Install as a user would:**
    ```sh
    cd /tmp && verdict update && verdict --version      # must print NEW
-   verdict weights --check
    ```
    `update` retries once by itself if uv's git cache lags the fresh tag ("Could not parse
    object"); a second failure is real.
@@ -117,10 +116,8 @@ The GitHub release exists with the wheel and sdist, `verdict --version` prints N
 
 ## A new checkpoint is a different release
 
-The weights are private, in the Hugging Face repo `iksnerd/verdict-v1-mlx`, pinned in
-`src/verdict/weights.py` by revision and by the sha256 of `model.safetensors`. A new checkpoint
-is a new commit there (upload with a token that can write, `HF_TOKEN`), then a code release that
-pins the new revision and hash. Prove it first: `verdict weights` into an empty `model.path` with
-`HF_TOKEN` set, then `diff -r` against the source folder, and the same without a token, which
-must fail cleanly and leave nothing behind. Keep the repo private: the fine-tune was trained on
-Gemini labels (Google's terms bar building competing models, a call made against redistributing).
+verdict defaults to base Laya and has no command to download a fine-tune. The private fine-tune
+lives in the Hugging Face repo `iksnerd/verdict-v1-mlx`; a new one is a new commit there (upload
+with a token that can write), fetched by hand to wherever `model.path` points. Keep it private:
+it was trained on Gemini labels (Google's terms bar building competing models). A fine-tune
+meant for the public needs redistributable labels and would be pinned in a code release.

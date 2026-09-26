@@ -1,9 +1,4 @@
-"""Every test sees an empty weights directory and no network for the weights download.
-
-Two `update` tests passed on this Mac and failed in CI: here the fine-tuned weights really sit in
-~/.local/share/verdict/models, so `update`'s weights check found them and did nothing; on a clean
-runner it tried a real download. A test must not depend on what the machine has
-installed, and the suite needs no network (CLAUDE.md), so both are pinned here for every test.
+"""No machine configuration reaches a test.
 
 Settings too: with `lang = "multi"` in ~/.config/verdict/config.toml, four language tests failed
 in the pre-commit export, and passed in the checkout only because its gitignored verdict.toml
@@ -15,19 +10,7 @@ import os
 
 import pytest
 
-from verdict import config, weights
-
-
-@pytest.fixture(autouse=True)
-def _no_machine_weights(monkeypatch, tmp_path_factory):
-    monkeypatch.setattr(weights, "DATA_DIR", tmp_path_factory.mktemp("weights-data"))
-
-    def no_network(*args, **kwargs):
-        raise AssertionError(f"a test tried to run {args[0] if args else '?'}; the weights "
-                             "download must be faked (pass `download`, or patch weights.fetch)")
-
-    # At the Hub call, not at `hf_download`, so tests of `hf_download` itself still run it.
-    monkeypatch.setattr(weights, "_snapshot_download", no_network)
+from verdict import config
 
 
 @pytest.fixture(autouse=True)

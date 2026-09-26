@@ -28,9 +28,8 @@ gen ──> label ──> split ──> export ──> train ──> convert ─
 Run: `uv run python -m verdict.pipeline --config configs/v1.json --run-dir runs/v1 --stage all`
 (`configs/dev.json` is the smaller, cheaper one).
 
-A converted checkpoint ships to the private Hugging Face repo `iksnerd/verdict-v1-mlx`, pinned by
-revision and by the sha256 of `model.safetensors` in `src/verdict/weights.py`; `verdict weights`
-fetches it. A new checkpoint is a new commit there and a new pin in a code release.
+A converted checkpoint goes to the private Hugging Face repo `iksnerd/verdict-v1-mlx`; a machine
+uses it by pointing `[model].path` at a local copy. verdict itself defaults to base Laya.
 ## Rules every stage follows
 
 - **Resumable.** Rerun a stage and only the missing work happens. Rows are appended and fsynced

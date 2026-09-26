@@ -143,3 +143,10 @@ Append-only, oldest first. Read before changing the skill.
 - **Score:** rubric v2: 95 → 95; facts in existing sections, validator clean.
 - **Outcome:** Accepted.
 
+### 2026-09-26: base Laya is the default; no fine-tune download
+- **Trigger:** verdict dropped `verdict weights` and made base Laya the default model (the fine-tune
+  is private, and within noise of base once a yes/no is asked as a no/yes choice, §40).
+- **Change:** the model bullet says base Laya is the default and why it is enough; the
+  troubleshooting entry for "not found, so using base laya" now points at `model.path`.
+- **Score:** rubric v2: 95 → 95; facts in existing bullets, validator clean.
+- **Outcome:** Accepted.

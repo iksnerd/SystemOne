@@ -25,7 +25,7 @@ History is pushed, so do not rewrite it without asking.
   2026-09-22). Anyone who wants an answer to launch something writes that in their own script.
   The only commands that run anything are maintenance: `verdict update` (in a checkout, `git pull
   --ff-only` plus `uv sync --extra mlx --extra laya`; in a `uv tool` install, a reinstall of the
-  newest `v*` tag) and `verdict weights` (a Hugging Face download of the checkpoint).
+  newest `v*` tag).
 - Tests first. `uv run pytest` is the gate; nothing needs the network or a model.
 
 ## The one that matters
@@ -84,8 +84,9 @@ Do not re-derive these. Each is measured, in `docs/FINDINGS.md`.
   short, a `vX.Y.Z` tag with a committed scorecard (`bench/scorecards/vX.Y.Z.json`, run at
   normal priority); `.github/workflows/release.yml` runs the suite on macOS arm64 on tags only
   (10x-billed minutes), checks the tag against the version and refuses a missing or regressed
-  scorecard. The checkpoint is private, in the Hugging Face repo `iksnerd/verdict-v1-mlx`, pinned by revision
-  and sha256 in `src/verdict/weights.py`; the skill's last section covers a new one.
+  scorecard. The default model is base Laya (`aac6fef/laya-mlx`); the fine-tune is private, in
+  the Hugging Face repo `iksnerd/verdict-v1-mlx`, used only where `model.path` points at it.
+  Scorecards come from the release machine's configured model (the fine-tune).
 - Docs: README (landing), `docs/guide.md` (usage), `docs/api.md`, `docs/routing.md`,
   `docs/pipeline.md`, and
   `examples/` (synthetic inputs, real outputs, checked by `tests/test_examples.py`). When a command
@@ -113,7 +114,7 @@ Do not re-derive these. Each is measured, in `docs/FINDINGS.md`.
   (JSON state; `--questions` preset, library names comma-separated, JSON or file; `--jsonl`;
   `--calibration`; `--server-only` to fail instead of loading locally), `verdict validate -q BANK
   [--json]` (checks a bank with no model), `verdict questions` (the measured library), `verdict presets`,
-  `verdict calibrate`, `verdict weights [--check]`, `verdict bench [--verify CARD]`, `verdict rank`, `verdict docs`. The plugin's `verdict` skill says
+  `verdict calibrate`, `verdict bench [--verify CARD]`, `verdict rank`, `verdict docs`. The plugin's `verdict` skill says
   when an agent should reach for it.
 - The everyday `verdict` on PATH is a `uv tool` install of a release tag, not this checkout:
   `uv tool install --python 3.11 'verdict[mlx,laya] @ git+https://github.com/iksnerd/SystemOne.git@vX.Y.Z'`.

@@ -74,7 +74,7 @@ def test_serve_help_mentions_the_jev_protocol():
 
 
 @pytest.mark.parametrize("command", ["validate", "ask", "decide", "rank", "calibrate", "bench",
-                                     "update", "weights", "route"])
+                                     "update", "route"])
 def test_every_command_a_script_can_branch_on_states_its_exit_status(command, capsys):
     """`bench --verify` gates releases on its exit code and its help did not say so."""
     with pytest.raises(SystemExit):

@@ -1,4 +1,4 @@
-"""Getting a machine ready to answer: `verdict serve`, `verdict init` and `verdict weights`."""
+"""Getting a machine ready to answer: `verdict serve` and `verdict init`."""
 from __future__ import annotations
 
 import argparse
@@ -113,8 +113,9 @@ def _init_cmd(args: argparse.Namespace) -> int:
     elif found and not Path(default_path).is_dir():
         default_path = next((f for f in found if "verdict" in Path(f).name), found[0])
     model_path = _ask("path", default_path, args.yes)
-    ok_model = Path(model_path).is_dir()
-    print(f"  {'ok' if ok_model else 'MISSING'}: {model_path}")
+    hub = not config._is_local(model_path)
+    ok_model = hub or Path(model_path).expanduser().is_dir()
+    print(f"  {'hub, downloaded on first use' if hub else 'ok' if ok_model else 'MISSING'}: {model_path}")
     multilingual = _ask("multilingual (loaded only by --lang multi)", current.multilingual_path,
                         args.yes)
     print()
@@ -148,43 +149,6 @@ def _init_cmd(args: argparse.Namespace) -> int:
     print(f"  verdict serve              # binds {url}; stop it when you are done")
     print('  verdict ask "commit the fix and push it" "Is this an instruction?"')
     if not ok_model:
-        if _ask("fetch the fine-tuned weights now (843 MB)? y/n", "y", args.yes).lower().startswith("y"):
-            return _ensure_weights()
-        print(f"\n  NOTE: {model_path} is missing, so verdict will use base laya instead, "
-              "which is weaker on yes/no questions (FINDINGS §35). `verdict weights` fetches "
-              "the fine-tune.")
-    return 0
-
-
-def _weights_cmd(args: argparse.Namespace) -> int:
-    """Fetch the fine-tuned checkpoint from its release, or with --check only report."""
-    from .. import weights
-
-    try:
-        target = weights.target_for(support._settings().model_path)
-    except ValueError as exc:
-        return support._fail(str(exc))
-    if args.check:
-        state = "present" if weights.present(target) else "missing"
-        print(f"{weights.REPO}: {state} at {target}")
-        return 0 if state == "present" else 1
-    return _ensure_weights(target)
-
-
-def _ensure_weights(target: Path | None = None) -> int:
-    """Fetch the weights if they are missing. `init` and `update` call this, so a new machine
-    ends up with the fine-tune rather than the base-laya fallback."""
-    from .. import weights
-
-    try:
-        target = target or weights.target_for(support._settings().model_path)
-    except ValueError:
-        return 0  # a Hub id is configured: laya-mlx fetches it itself
-    if weights.present(target):
-        return 0
-    print(f"fetching the fine-tuned weights ({weights.REPO}, 843 MB) into {target} ...", flush=True)
-    try:
-        print(weights.fetch(target))
-    except ValueError as exc:
-        return support._fail(f"{exc}\n  until then verdict answers with base laya (weaker on yes/no)")
+        print(f"\n  NOTE: {model_path} is missing, so verdict will use base laya "
+              f"({config.FALLBACK_MODEL}) instead.")
     return 0

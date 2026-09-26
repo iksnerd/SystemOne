@@ -39,12 +39,8 @@ pkill -f 'verdict serve'   # stop it when you're done; it holds the model in GPU
 verdict runs [Laya](https://huggingface.co/convaiinnovations/laya) checkpoints. The author's
 fine-tune, `verdict-v1`, is **not public**: it was trained on Gemini-generated labels, and
 Google's terms bar using Gemini to build competing models, so its weights stay in a private
-Hugging Face repo. A public install uses **base Laya** (`aac6fef/laya-mlx`, Apache-2.0), which
-downloads itself. Say so once, and verdict stops warning that the fine-tune is missing:
-
-```sh
-export VERDICT_MODEL=aac6fef/laya-mlx      # or path = "aac6fef/laya-mlx" under [model] in the config
-```
+Hugging Face repo. verdict uses **base Laya** (`aac6fef/laya-mlx`, Apache-2.0) by default, and
+it downloads itself on first use. `model.path` in the config points at any other checkpoint.
 
 What that costs, measured on the same 1,640 public items ([FINDINGS §35](docs/FINDINGS.md)):
 
@@ -67,12 +63,10 @@ fine-tune ([§40](docs/FINDINGS.md)). So on base Laya:
 - **Rank, don't threshold,** until you have fitted a cut with `verdict calibrate` on your own
   labels. The cuts quoted in the docs are the fine-tune's.
 
-The example outputs in this README and in `examples/` come from the fine-tune.
+The example outputs in this README and in `examples/` come from the fine-tune, and so do the
+release scorecards.
 
-With access to the private repo, `verdict weights` downloads the fine-tune (843 MB) with
-`HF_TOKEN` or `hf auth login`, checks its sha256 and puts it in `~/.local/share/verdict/models/`
-(or at `model.path`, when the config sets an absolute one); `init` and `update` run it when it is
-missing. After the first install, `verdict update` moves you to the newest release; a test keeps
+After the first install, `verdict update` moves you to the newest release; a test keeps
 the tag in the install line above equal to the current version.
 
 ## What it does
@@ -153,7 +147,7 @@ Releases are tags. Bump `version` in `pyproject.toml`, run
 `git tag vX.Y.Z && git push origin vX.Y.Z`. The release workflow runs every test on macOS with
 both extras, checks the tag against the version, refuses a missing scorecard or one below the
 previous scorecard's interval, and publishes the wheel. `verdict update` then installs it. The
-release holds code only; the weights are the private Hugging Face repo `iksnerd/verdict-v1-mlx`.
+release holds code only; base Laya downloads itself from Hugging Face.
 
 What is where:
 
@@ -163,7 +157,6 @@ What is where:
 | `src/verdict/inputs.py` | states, banks, presets, field and language checks |
 | `src/verdict/library.py`, `library.json` | the measured questions behind `verdict questions`, and the linter |
 | `src/verdict/bench.py`, `bench_suites.json` | `verdict bench` and its pinned suites; scorecards in `bench/scorecards/` |
-| `src/verdict/weights.py` | fetching the fine-tuned checkpoint, pinned by sha256 |
 | `src/verdict/calibrate.py` | cuts, temperatures, AUC and per-option recall, pure Python |
 | `src/verdict/schema.py` | the wire contract, mirroring Laya's |
 | `src/verdict/backend_mlx.py`, `engine.py` | loading the checkpoint, clipping, answering |

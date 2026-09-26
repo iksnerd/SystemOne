@@ -175,8 +175,7 @@ Examples:
   verdict serve --port 8800
 
 Loads one checkpoint, and the multilingual one only when a call asks for it (--lang multi).
-With the fine-tuned weights missing from model.path it loads base laya instead and says so; its
-yes/no answers are weaker (FINDINGS §35). Localhost only, no auth. Stop it when you are done; it
+If model.path names a local checkpoint that is missing, it loads base laya instead and says so. Localhost only, no auth. Stop it when you are done; it
 holds the model in GPU memory.
 
 It also speaks TypeSafe Jev's protocol (POST /v1/systemone, GET /v1/models), so Jev's SDKs and
@@ -433,22 +432,6 @@ release (or, in a checkout, newer commits) is available.
 """)
     u.add_argument("--check", action="store_true", help="report how far behind, change nothing")
     u.set_defaults(fn=update._update_cmd)
-
-    w = command("weights", "fetch the fine-tuned checkpoint from Hugging Face",
-                "Download the fine-tuned checkpoint (843 MB) from its private Hugging Face repo "
-                "(HF_TOKEN or `hf auth login`), check its sha256, and put it at model.path, or at "
-                "~/.local/share/verdict/models/ when model.path is the built-in default. "
-                "Without it verdict answers with base laya, which is weaker on yes/no.",
-                """Examples:
-  verdict weights           # fetch if missing; does nothing if present
-  verdict weights --check   # report only: exit 0 present, 1 missing
-
-`verdict init` and `verdict update` run this when the weights are missing.
-
-Exit status: 0 present or fetched; --check 1 when missing; 2 when fetching failed.
-""")
-    w.add_argument("--check", action="store_true", help="report whether the weights are present")
-    w.set_defaults(fn=setup._weights_cmd)
 
     i = command("init", "write a config from what this machine has")
     i.add_argument("--out", default=str(support._user_config()),

@@ -22,11 +22,10 @@ right, so don't gate on a raw score.
 It is a CLI on Apple Silicon (`uv tool install --python 3.11 'verdict[mlx,laya] @
 git+https://github.com/iksnerd/SystemOne.git@vX.Y.Z'`). `verdict --help` and `verdict COMMAND
 --help` have the full reference; the repo's `docs/guide.md` is the human guide and `examples/`
-has real runs. Which model answers matters, so check once: `verdict weights --check`.
-- The author's fine-tune is private. Without it verdict runs **base Laya**, the same on named
-  choices, topics and emotion, but at chance on a plain yes/no (SST-2 0.50 against 0.80,
-  FINDINGS §35). Prefer named choices there (below). Set `VERDICT_MODEL=aac6fef/laya-mlx` to say
-  so and silence the "fine-tune missing" warning.
+has real runs.
+- verdict runs **base Laya** by default. A plain yes/no is at chance on it (SST-2 0.50), but
+  verdict asks every new yes/no as a no/yes choice, where base Laya is within noise of the
+  author's private fine-tune (0.94 against 0.96, FINDINGS §40).
 - Non-English text needs `--lang multi` or `VERDICT_LANG=multi` (see Reading the numbers).
 
 ## Reach for it when, and only when
@@ -131,9 +130,8 @@ TypeSafe's cookbooks work locally with `TYPESAFE_BASE_URL=http://127.0.0.1:8799`
 (Jev takes 255), and each extra question costs a full pass here, where Jev's fan-out is one.
 
 **When the tool misbehaves:**
-- "not found, so using base laya": the fine-tune is missing, so plain yes/no answers are weak.
-  With access, `verdict weights` fetches it; without, use named choices and set
-  `VERDICT_MODEL=aac6fef/laya-mlx`.
+- "not found, so using base laya": `model.path` names a local checkpoint that is not there. Fix
+  the path, or remove it to use base Laya on purpose.
 - Every answer is 0.5, or every choice is a coin flip: the server is the `uniform` backend (no
   model), usually because it was started as `uvicorn verdict.api:app` instead of `verdict serve`.
   Stop it and run `verdict serve`. Never gate on a uniform answer.

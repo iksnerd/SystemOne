@@ -68,7 +68,7 @@ def _update_tool(args: argparse.Namespace) -> int:
         have = (0,)
     if have >= tags[-1]:
         print(f"verdict {current} is up to date (newest release v{newest})")
-        return 0 if args.check else setup._ensure_weights()
+        return 0
     if args.check:
         print(f"verdict {current} installed; v{newest} is available. `verdict update` installs it")
         return 1
@@ -84,7 +84,7 @@ def _update_tool(args: argparse.Namespace) -> int:
     print(f"updated {current} -> {newest}")
     if _server_up():
         print("A verdict server is running the old code: restart `verdict serve` to use it.")
-    return setup._ensure_weights()
+    return 0
 
 
 def _git_url(url: str) -> str:

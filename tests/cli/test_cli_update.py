@@ -69,7 +69,7 @@ def test_update_pulls_fast_forward_only_then_syncs_with_both_extras(shell, capsy
 
 
 def test_check_reports_and_changes_nothing(shell, capsys):
-    """Exit 1 when behind, as `weights --check` exits 1 when missing, so a script can branch."""
+    """Exit 1 when behind, so a script can branch on it."""
     assert cli.main(["update", "--check"]) == 1
     assert ran(shell, "fetch") and not ran(shell, "pull") and not ran(shell, "uv sync")
     assert "3" in capsys.readouterr().out
@@ -130,13 +130,6 @@ class ToolShell:
 
 @pytest.fixture
 def tool(monkeypatch, tmp_path):
-    from verdict import weights
-
-    # The built-in model path, whose weights live in the (per-test, empty) data dir: present
-    # here, so `update` has nothing to fetch. Not the machine's config or weights.
-    monkeypatch.setenv("VERDICT_MODEL", "models/verdict-v1-mlx")
-    (weights.DATA_DIR / weights.DIRNAME).mkdir(parents=True)
-    (weights.DATA_DIR / weights.DIRNAME / "model.safetensors").write_bytes(b"w")
     monkeypatch.setattr(update, "_checkout", lambda: tmp_path)  # no .git: a tool install
     monkeypatch.setattr(update, "_server_up", lambda: False)
     monkeypatch.setattr(support, "_version", lambda: "verdict 0.2.1")
@@ -172,41 +165,6 @@ def test_tool_install_ignores_tags_that_are_not_versions(tool, capsys):
     tool.tags = "v0.2.1 nightly v0.3.0-rc1 latest"
     assert cli.main(["update", "--check"]) == 0
     assert "up to date" in capsys.readouterr().out
-
-
-def test_tool_update_fetches_missing_weights(tool, monkeypatch, capsys):
-    from verdict import weights
-
-    target = weights.DATA_DIR / weights.DIRNAME
-    (target / "model.safetensors").unlink()
-    target.rmdir()
-    fetched = []
-    monkeypatch.setattr(weights, "fetch", lambda t, **k: fetched.append(t) or f"fetched into {t}")
-    tool.tags = "v0.1.0 v0.2.1"
-    assert cli.main(["update"]) == 0
-    assert fetched == [target]
-
-
-def test_a_failed_weights_fetch_says_verdict_still_answers(tool, monkeypatch, capsys):
-    from verdict import weights
-
-    (weights.DATA_DIR / weights.DIRNAME / "model.safetensors").unlink()
-
-    def fail(t, **k):
-        raise ValueError("cannot read iksnerd/verdict-v1-mlx: the weights are private")
-    monkeypatch.setattr(weights, "fetch", fail)
-    tool.tags = "v0.1.0 v0.2.1"
-    assert cli.main(["update"]) == 2
-    assert "base laya" in capsys.readouterr().err
-
-
-def test_update_check_never_fetches(tool, monkeypatch):
-    from verdict import weights
-
-    (weights.DATA_DIR / weights.DIRNAME / "model.safetensors").unlink()
-    monkeypatch.setattr(weights, "fetch", lambda *a, **k: pytest.fail("--check must not fetch"))
-    tool.tags = "v0.1.0 v0.2.1"
-    assert cli.main(["update", "--check"]) == 0
 
 
 # --- a uv cache that lags a just-pushed tag -----------------------------------------------------

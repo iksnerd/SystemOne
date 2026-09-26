@@ -33,3 +33,10 @@
   and after.
 - **Outcome:** Accepted.
 
+### 2026-09-26: no weights step
+- **Trigger:** `verdict weights` was removed and base Laya became the default.
+- **Change:** step 8 no longer runs `verdict weights --check`; the checkpoint section says the
+  fine-tune is fetched by hand to wherever `model.path` points, and a public one would need
+  redistributable labels.
+- **Score:** validator clean; not rescored.
+- **Outcome:** Accepted.

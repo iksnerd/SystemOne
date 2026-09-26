@@ -26,16 +26,14 @@ verdict runs on Apple Silicon with Python 3.11:
 
 ```sh
 uv tool install --python 3.11 'verdict[mlx,laya] @ git+https://github.com/iksnerd/SystemOne.git@v0.1.0'
-verdict init      # fetches the weights if missing, writes ~/.config/verdict/config.toml
+verdict init      # writes ~/.config/verdict/config.toml
 verdict --version
 ```
 
-The fine-tuned weights (843 MB) are not in this repo. They are private, in the Hugging Face repo
-`iksnerd/verdict-v1-mlx`: with a token that can read it (`HF_TOKEN`, or `hf auth login`), `verdict
-weights` downloads the pinned revision, checks the sha256 and puts them to `~/.local/share/verdict/models/verdict-v1-mlx`, or to `[model].path`
-when the config sets an absolute one. `verdict init` and
-`verdict update` do this when they are missing; `verdict weights --check` only reports. Without
-them verdict answers with base laya and says so; its yes/no answers are weaker (FINDINGS §35).
+verdict answers with base Laya (`aac6fef/laya-mlx`), which downloads itself from Hugging Face on
+first use. The author's fine-tune is private (its labels came from Gemini) and within noise of base
+Laya once a yes/no is asked as a no/yes choice (FINDINGS §40). `[model].path` points at any other
+checkpoint, a Hub id or a local folder.
 
 To update, run `verdict update`, which installs the newest release tag. `verdict update --check`
 only reports, and exits 1 when a newer release is available. Each release has passed the full test suite in CI, and its answer-quality scorecard
@@ -254,7 +252,7 @@ The rules that came out of doing it once:
 | `verdict` breaks after a hand-typed `uv sync` | plain `uv sync` drops the mlx and laya extras | `verdict update`, or `uv sync --extra mlx --extra laya` in the repo |
 | "question 'x' asks about `field`, which the state does not have" | the bank was written for different data | rename the state's key or the backticked field |
 | `spread q: 0.58 to 0.65 ... narrow range` | the inputs don't vary where the question looks, or they're boilerplate | check who wrote them; filter bots and templates |
-| "... not found, so using base laya" | the fine-tuned weights are not at `[model].path` | `verdict weights` fetches them (needs an `HF_TOKEN` with access); base laya is weaker on yes/no (§35) |
+| "... not found, so using base laya" | `[model].path` names a local checkpoint that is not there | fix the path, or remove it to use base Laya on purpose |
 | "the server answered 422: ..." | the server refused the question bank; verdict reports this rather than loading a model locally | fix the bank the message names; a malformed bank fails the same way with no server running |
 | "... Refused, because answers to this shape measured at chance" | the question asks about a consequence, difficulty or absence, or names a field the state lacks | reword it to ask what the text says; `--allow-unmeasured` to ask anyway, or `calibrate` it on real labels |
 | "a yes/no cut needs both yes and no labels" | every labelled example in the calibration set has the same answer | label some of the other class; there is no cut to fit on one |
@@ -276,12 +274,11 @@ The rules that came out of doing it once:
 | `verdict serve` | holds the model on localhost:8799; also speaks TypeSafe's Jev protocol ([api.md](api.md)) |
 | `verdict update [--check]` | installs the newest release (or pulls, in a dev checkout) |
 | `verdict init` | writes the config from what the machine has |
-| `verdict weights [--check]` | fetches the fine-tuned checkpoint from its release, checked by sha256 |
 | `verdict route PROMPT` | the big-or-small switch example; at chance on real traffic ([routing.md](routing.md)) |
 | `verdict cases` | prints that switch: its branches, default and questions |
 
 Exit status is 2 for a usage error everywhere. `ask --cut` exits 0 for yes and 1 for no.
-`weights --check` exits 0 when the weights are present and 1 when they are missing.
+`update --check` exits 1 when a newer release is available.
 
 ## Scripts and agents
 

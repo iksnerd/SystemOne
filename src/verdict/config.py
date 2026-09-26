@@ -32,7 +32,7 @@ DEFAULTS: dict[str, Any] = {
     "server": {"url": "http://127.0.0.1:8799"},
     # `multilingual` is laya's own mmBERT checkpoint for non-English state. It loads only when a
     # call asks for it (`--lang multi`), never at startup: a second model on the GPU is a choice.
-    "model": {"path": "models/verdict-v1-mlx", "prompt_token_budget": 128,
+    "model": {"path": "aac6fef/laya-mlx", "prompt_token_budget": 128,
               "multilingual": "aac6fef/laya-multilingual-mlx", "bits": 16, "lang": "auto"},
 }
 
@@ -243,31 +243,27 @@ lang = "{s.lang}"
 FALLBACK_MODEL = "aac6fef/laya-mlx"
 
 
+#: The old built-in default: a local checkpoint that has the `owner/name` shape of a Hub id, so it
+#: is named here explicitly. Configs written before base Laya became the default may still hold it.
+LEGACY_LOCAL = "models/verdict-v1-mlx"
+
+
 def _is_local(path: str) -> bool:
-    """A filesystem path rather than a Hugging Face id. `models/verdict-v1-mlx`, the built-in
-    default, has the `owner/name` shape of a Hub id, so it is named here explicitly."""
-    return (path.startswith(("/", ".", "~")) or path == DEFAULTS["model"]["path"]
-            or path.count("/") != 1)
+    """A filesystem path rather than a Hugging Face id."""
+    return path.startswith(("/", ".", "~")) or path == LEGACY_LOCAL or path.count("/") != 1
 
 
 def resolve_model(path: str, explicit: bool = False) -> tuple[str, str | None]:
     """The checkpoint to load, and a warning when it is not the one configured.
 
-    The fine-tuned weights are not in git or the release, so without them every load failed.
-    Base laya ties on choices and is weaker on yes/no (FINDINGS §35), which beats no answer at
-    all, provided the caller is told. A `--model` the caller typed is never replaced: a typo there
-    should fail, not quietly load something else.
+    A configured local checkpoint that is missing falls back to base laya rather than failing:
+    with every new yes/no asked as a no/yes choice, base laya is within noise of the fine-tune
+    (FINDINGS §40), which beats no answer, provided the caller is told. A `--model` the caller
+    typed is never replaced: a typo there should fail, not quietly load something else.
     """
     if explicit or Path(path).expanduser().exists() or not _is_local(path):
         return path, None
-    from . import weights
-
-    fetched = weights.DATA_DIR / weights.DIRNAME
-    if path == DEFAULTS["model"]["path"] and fetched.exists():
-        # The built-in default is relative to wherever verdict runs; `verdict weights` puts the
-        # checkpoint in the data dir, so a fresh machine needs no config to find it.
-        return str(fetched), None
     return FALLBACK_MODEL, (
         f"{path} not found, so using base laya ({FALLBACK_MODEL}), downloaded on first use. "
-        "Its yes/no answers are weaker (sentiment 0.50 against 0.80 AUC for the fine-tune, "
-        "FINDINGS §35); choices score the same. Run `verdict weights` to fetch the fine-tune.")
+        "It is within noise of the fine-tune on the bench's yes/no and choice sets "
+        "(FINDINGS §40); set model.path to use another checkpoint.")

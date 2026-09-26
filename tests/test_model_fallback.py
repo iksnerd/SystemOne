@@ -22,14 +22,10 @@ def test_an_existing_checkpoint_is_used_as_is(tmp_path):
 
 @pytest.mark.parametrize("missing", ["/nowhere/verdict-v1-mlx", "./models/gone", "models/verdict-v1-mlx"])
 def test_a_missing_local_checkpoint_falls_back_to_base_laya(missing, monkeypatch, tmp_path):
-    monkeypatch.chdir(tmp_path)  # so the built-in relative default does not exist either
-    from verdict import weights
-
-    # Not this machine's real data dir, which may hold fetched weights the resolver would find.
-    monkeypatch.setattr(weights, "DATA_DIR", tmp_path / "data")
+    monkeypatch.chdir(tmp_path)  # so the old relative default does not exist either
     model, warning = config.resolve_model(missing)
     assert model == DEFAULT_MODEL
-    assert missing in warning and "§35" in warning and "yes/no" in warning
+    assert missing in warning and "§40" in warning
 
 
 def test_a_configured_hub_id_is_left_alone(monkeypatch, tmp_path):
@@ -53,9 +49,6 @@ def settings_with(path):
 
 
 def test_ask_falls_back_and_warns_once(monkeypatch, capsys, tmp_path):
-    from verdict import weights
-
-    monkeypatch.setattr(weights, "DATA_DIR", tmp_path / "data")
     monkeypatch.setattr(config, "load", lambda: settings_with(str(tmp_path / "gone")))
     ns = argparse.Namespace(url=None, model=None, lang="en")
     asker = inference._Asker(ns)
