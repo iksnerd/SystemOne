@@ -28,6 +28,10 @@ gen ──> label ──> split ──> export ──> train ──> convert ─
 Run: `uv run python -m verdict.pipeline --config configs/v1.json --run-dir runs/v1 --stage all`
 (`configs/dev.json` is the smaller, cheaper one).
 
+`uv run python -m verdict.pipeline.compile runs/v1 runs/issues_pilot ... --out data/compiled/synthetic.jsonl`
+gathers runs into one file: a row per state per run, with its split and every teacher's raw
+labels, nothing averaged, so any training target can be rebuilt without relabelling.
+
 A converted checkpoint goes to the private Hugging Face repo `iksnerd/verdict-v1-mlx`; a machine
 uses it by pointing `[model].path` at a local copy. verdict itself defaults to base Laya.
 ## Rules every stage follows
