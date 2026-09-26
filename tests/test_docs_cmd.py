@@ -54,3 +54,20 @@ def test_every_topic_is_packed_into_the_wheel():
 
 def test_the_cli_offers_every_topic():
     assert tuple(docs.TOPICS) == cli.TOPIC_NAMES
+
+
+class _ClosedPipe:
+    """stdout after the reader (`head`, `less`) has quit: every write fails."""
+
+    def write(self, text):
+        raise BrokenPipeError(32, "Broken pipe")
+
+    def flush(self):
+        raise BrokenPipeError(32, "Broken pipe")
+
+
+def test_a_closed_pipe_ends_quietly(monkeypatch):
+    """`verdict docs findings | head` printed a BrokenPipeError traceback. A reader that stops early
+    is normal use, not an error."""
+    monkeypatch.setattr("sys.stdout", _ClosedPipe())
+    assert cli.main(["docs", "findings"]) == 0

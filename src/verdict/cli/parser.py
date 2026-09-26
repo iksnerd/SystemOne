@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 from . import catalog, decisions, docs_cmd, evaluation, inference, routing, setup, support, update
@@ -446,3 +447,13 @@ release (or, in a checkout, newer commits) is available.
     except (FileNotFoundError, QuestionError, client.ServerError, client.NoServer,
             ConfigError) as e:
         return support._fail(str(e))
+    except BrokenPipeError:
+        # The reader quit early (`verdict docs | head`): normal use, not an error. Point stdout at
+        # /dev/null so the interpreter's own flush at exit does not raise again (Python docs,
+        # "Note on SIGPIPE").
+        try:
+            devnull = os.open(os.devnull, os.O_WRONLY)
+            os.dup2(devnull, sys.stdout.fileno())
+        except (AttributeError, OSError, ValueError):
+            pass
+        return 0
