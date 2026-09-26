@@ -21,7 +21,7 @@ for data that must stay local. Use a small LLM for categories that need world kn
 Apple Silicon, Python 3.11.
 
 ```sh
-uv tool install --python 3.11 'verdict[mlx,laya] @ git+https://github.com/iksnerd/verdict.git@v0.1.0'
+uv tool install --python 3.11 'verdict[mlx,laya] @ git+https://github.com/iksnerd/verdict.git@v0.2.0'
 verdict init        # fetches the weights if you have access, picks a free port, writes the config
 verdict serve &     # holds the model, so each call costs milliseconds
 
