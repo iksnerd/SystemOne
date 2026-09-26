@@ -121,14 +121,14 @@ def fit(rows: Sequence[dict], probs: dict, ratio: float = COST_RATIO) -> tuple[f
 
 
 def evaluate(rows: Sequence[dict], probs: dict, td: float = T_DIFFICULTY, ts: float = T_SENSITIVE) -> dict:
-    """The full scorecard payload. `score` at the top level is what APOL reads."""
+    """The full scorecard payload. `score` at the top level is what a scorecard reads."""
     train = [r for r in rows if r["split"] == "train"]
     test = [r for r in rows if r["split"] == "test"]
     held_out = score(test, probs, td, ts)
     lo, hi = bootstrap_ci(test, lambda sample: score(sample, probs, td, ts)["accuracy"])
     labels = [1 if r["want"] == SMALL else 0 for r in rows]
     return {
-        # Held-out accuracy as a share out of 100, so APOL has an integer perfect score.
+        # Held-out accuracy as a share out of 100, so a scorecard has an integer perfect score.
         "score": round(100 * held_out["accuracy"], 2),
         "n_train": len(train), "n_test": len(test),
         "held_out": {k: v for k, v in held_out.items() if k != "wrong"},

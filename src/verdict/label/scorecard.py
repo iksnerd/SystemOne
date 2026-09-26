@@ -2,7 +2,7 @@
 reference teacher? This is the ceiling a student trained on their labels can hope to reach.
 
 Scored per question (same argmax for a choice, same side of 0.5 for a yes/no), averaged, as a share
-out of 100 so APOL can use an integer perfect score."""
+out of 100, so a scorecard can use an integer perfect score."""
 from __future__ import annotations
 
 from collections import defaultdict

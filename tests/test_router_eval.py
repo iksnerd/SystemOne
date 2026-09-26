@@ -1,4 +1,4 @@
-"""`router_eval` is what both the CLI and the APOL scorecard call, so its arithmetic is tested
+"""`router_eval` is what both the CLI and any scorecard call, so its arithmetic is tested
 here rather than trusted. No model: the scoring takes cached outputs, which is the same path a
 scorecard replay uses."""
 from __future__ import annotations

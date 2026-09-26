@@ -1,6 +1,6 @@
 """Pipeline stages. Each one is resumable (rerun it and only the missing work happens), writes
 crash-safe files, and ends by writing `<stage>.manifest.json`: config hash, git commit, sha256
-of every input and output, counts and spend. The manifest is what APOL scorecards pin."""
+of every input and output, counts and spend. The manifest is what a scorecard pins."""
 from __future__ import annotations
 
 import hashlib
