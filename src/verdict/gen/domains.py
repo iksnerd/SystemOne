@@ -2,7 +2,7 @@
 model from writing the same message a thousand times."""
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 
 LEDGER_INTRO = "You are writing one message that {author} posts in a shared engineering room about: {topic}."
@@ -216,4 +216,27 @@ ISSUES = Domain(
     ),
     ambiguity_lead="an issue that",
     state_style="issue",
+)
+
+
+#: The shapes FINDINGS §44 found missing: a real GitHub question often pastes an error and asks why,
+#: and a real bug report often asks whether it is expected. Same labels and projects as ISSUES.
+ISSUES_SHAPES = replace(
+    ISSUES,
+    name="github_issue_shapes",
+    types={
+        "bug": "reports a defect in the project, with steps to reproduce, versions or the wrong output, "
+               "and also asks a question about it, such as whether it is expected, whether it is a "
+               "regression or whether there is a workaround; the writer is sure the project is wrong",
+        "feature": ISSUE_TYPES["feature"],
+        "question": "asks why an error happens or how to get something working in the writer's own "
+                    "setup, and pastes the error message, a few lines of stack trace or log, or the code "
+                    "they tried; the writer suspects their own usage, not the project, and asks for help",
+    },
+    lengths=(
+        "a title and a short paragraph with a 3 to 6 line error or log excerpt",
+        "a title and a body with a short code snippet and the error it produces",
+        "a title and a two-paragraph body that quotes one error line",
+        "a title and a body that follows an issue template with a few headings",
+    ),
 )

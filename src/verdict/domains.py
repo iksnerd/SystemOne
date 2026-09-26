@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .gen.domains import EMOTION, ISSUES, MESSAGE_TYPING, Domain
+from .gen.domains import EMOTION, ISSUES, ISSUES_SHAPES, MESSAGE_TYPING, Domain
 from .label.bank import BANK, EMOTION_BANK, ISSUE_BANK
 
 EMOTION_PREAMBLE = (
@@ -31,6 +31,7 @@ DOMAINS = {
     "hub_message_typing": DomainSpec(MESSAGE_TYPING, BANK, None),
     "emotion": DomainSpec(EMOTION, EMOTION_BANK, EMOTION_PREAMBLE),
     "github_issue_typing": DomainSpec(ISSUES, ISSUE_BANK, ISSUE_PREAMBLE),
+    "github_issue_shapes": DomainSpec(ISSUES_SHAPES, ISSUE_BANK, ISSUE_PREAMBLE),
 }
 
 

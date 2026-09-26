@@ -42,3 +42,15 @@ def test_the_prompt_asks_for_an_unlabelled_issue():
     seed = plan_seeds(spec.domain, 1, random.Random(0))[0]
     prompt = build_prompt(spec.domain, seed)
     assert "GitHub issue" in prompt and "title" in prompt.lower()
+
+
+def test_the_shapes_domain_targets_questions_that_look_like_bugs():
+    # FINDINGS §44: synthetic questions read as clean how-tos; real ones paste an error and ask why
+    spec = get_domain("github_issue_shapes")
+    assert spec.bank == {"type": EVAL_QUESTION}
+    types = spec.domain.types
+    assert "error" in types["question"] and "why" in types["question"]
+    assert "?" in types["bug"] or "question" in types["bug"]
+    topics = " ".join(spec.domain.room_topics).lower()
+    for project in ("react", "tensorflow", "vscode", "vs code", "bitcoin", "opencv"):
+        assert project not in topics, project

@@ -126,15 +126,18 @@ Transport = Callable[[str, str], "tuple[str, dict]"]
 
 def gemini_transport(key: str, temperature: float = 0.7) -> Transport:
     def call(model: str, prompt: str):
-        r = httpx.post(
-            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
-            headers={"x-goog-api-key": key},
-            json={
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {"temperature": temperature, "responseMimeType": "application/json"},
-            },
-            timeout=120,
-        )
+        try:
+            r = httpx.post(
+                f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+                headers={"x-goog-api-key": key},
+                json={
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {"temperature": temperature, "responseMimeType": "application/json"},
+                },
+                timeout=120,
+            )
+        except httpx.HTTPError as e:  # a timeout costs one label, not the rest of the run
+            raise LabelError(f"{type(e).__name__}: {e}") from e
         if r.status_code != 200:
             raise LabelError(f"HTTP {r.status_code}: {r.text[:200]}")
         j = r.json()

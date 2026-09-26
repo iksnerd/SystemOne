@@ -125,3 +125,17 @@ def test_teacher_uses_its_preamble():
 
     Teacher("m", transport, preamble="ONLY THIS").label({"message": "x"}, BANK)
     assert "ONLY THIS" in seen["p"]
+
+
+def test_a_network_timeout_is_a_label_error_so_the_stage_carries_on(monkeypatch):
+    # a ReadTimeout escaping the transport ended two label runs early, still exiting 0
+    import httpx
+
+    from verdict.label.teacher import LabelError, gemini_transport
+
+    def slow(*a, **k):
+        raise httpx.ReadTimeout("The read operation timed out")
+
+    monkeypatch.setattr(httpx, "post", slow)
+    with pytest.raises(LabelError, match="timed out"):
+        gemini_transport("k")("gemini-2.5-flash-lite", "prompt")

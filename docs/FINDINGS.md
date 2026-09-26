@@ -1589,3 +1589,42 @@ stays local, and the default model is unchanged.
 A bug found on the way: the split audit read only `message` and `text`, so every `issue` state
 read as empty and "duplicated" a held-out one, and export wrote no training rows. The audit now
 reads `issue` too (`tests/test_export.py`).
+
+## 45. Round two, shaped data: better, still inside the noise, and the teachers are the limit (2026-09-26)
+
+§44's reading was that synthetic questions were too clean. Round two tested that directly, with
+the rule restated in advance and one addition: if question recall did not clear 0.35 as well,
+synthetic data would be recorded as the wrong lever for this task. The new domain,
+`github_issue_shapes`, asks for questions that paste an error, a trace or code and ask why, and
+for bug reports that also ask whether the behaviour is expected. Feature requests are unchanged.
+Base Laya was trained on round one's 554 items plus 338 new ones. Spend was about $0.60: $0.44
+generating (518 of 900 states kept, since traces ran past the 1,200-character cap) and $0.12
+labelling.
+
+| real issues, 300 | base Laya | round one | round two |
+|---|---|---|---|
+| accuracy | 0.587 [0.533, 0.647] | 0.623 [0.573, 0.680] | 0.650 [0.600, 0.700] |
+| question recall | 0.18 | 0.28 | 0.31 |
+| issues called bugs | 192 | 190 | 177 |
+
+Commit type (0.455) and dialogue acts (0.487) were unchanged from round one.
+
+**It fails the rule again.** The intervals still overlap, and question recall of 0.31 misses the
+0.35 kill line. Two rounds and about $1.30 took question recall from 0.18 to 0.31. Rewording the
+question alone reaches 0.27 (§42).
+
+**Why it stalls: the teachers.** Asked §41's question, the two Gemini teachers read the target
+shape as a bug. Of the questions that paste an error, teacher A labelled 130 of 177 as bugs and
+teacher B 108 of 201, with a mean P(question) of 0.44. The averaged training targets therefore
+leaned toward bug for exactly the items meant to teach "question". The NLBSE labels are what
+maintainers decided. "Is this a defect or a support request" is partly a judgment about the
+project rather than about the text. These teachers make it differently, so synthetic data they
+label cannot teach the maintainers' version. §43's decoder, at 0.78 question recall zero-shot,
+shows some of it is on the page for a model that reads it as a language model does.
+
+**Decision.** No round three. Issue type goes with commit type as a task to give a small LLM.
+Neither checkpoint ships, and the default model is unchanged.
+
+A bug was fixed on the way. The label transport let an `httpx` timeout escape, which ended
+two runs early while still exiting 0. It now raises `LabelError`, the stage counts one failure
+and carries on, and a resume fills the gap.
